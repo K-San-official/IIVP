@@ -16,6 +16,8 @@ cv2.imshow('RGBImage', RGBImage)
 cv2.imshow('Rimage', RImage)
 cv2.imshow('Gimage', GImage)
 cv2.imshow('Bimage', BImage)
+# My code :^)
+cv2.imshow('Merged LOL', cv2.merge([RImage, GImage, BImage]))
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 

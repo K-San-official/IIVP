@@ -1,18 +1,20 @@
 import cv2
 
-m = 10  # m >= 1
+m = 20  # m >= 1
 
 BGRImage = cv2.imread("pizza2.jpg")
 
-#Creates sampled image, sampled every m pixels
+# Creates sampled image, sampled every m pixels
 SampledImage = BGRImage[::m, ::m, :]
 
 # Resized for easier viewing
 [n1, n2, n3] = BGRImage.shape
-ResizedSampleImage = cv2.resize(SampledImage, (n2,n1), interpolation=cv2.INTER_NEAREST)
+ResizedSampleImageNN = cv2.resize(SampledImage, (n2, n1), interpolation=cv2.INTER_NEAREST)
+ResizedSampleImageBI = cv2.resize(SampledImage, (n2, n1), interpolation=cv2.INTER_LINEAR)
 
 cv2.imshow('BGRImage', BGRImage)
 cv2.imshow('SampledImage', SampledImage)
-cv2.imshow('ResizedImage', ResizedSampleImage)
+cv2.imshow('ResizedImageNN', ResizedSampleImageNN)
+cv2.imshow('ResizedImageBI', ResizedSampleImageBI)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
