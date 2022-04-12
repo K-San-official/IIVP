@@ -21,4 +21,8 @@ cv2.imshow('Merged LOL', cv2.merge([RImage, GImage, BImage]))
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
+hsi_image = cv2.cvtColor(RGBImage, cv2.COLOR_RGB2HLS)
+cv2.imshow("HSI", hsi_image)
 
+cv2.waitKey(0)
+cv2.destroyAllWindows()
