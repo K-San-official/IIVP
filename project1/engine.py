@@ -26,7 +26,6 @@ example: show_1_1_1_rgb_r() means to show the R-channel in RGB space of the firs
 """
 
 
-
 # Exercise 1.1 - Image 1
 def show_1_1_1_original():
     cv2.imshow("Task 1.1 - Image 1 - Original", bgr_1_1)
@@ -57,11 +56,11 @@ def show_1_1_1_hsv_h():
 
 
 def show_1_1_1_hsv_s():
-    cv2.imshow("Task 1.1 - Image 1 - HSV H-Channel", hsv_1_1[:, :, 1])
+    cv2.imshow("Task 1.1 - Image 1 - HSV S-Channel", hsv_1_1[:, :, 1])
 
 
 def show_1_1_1_hsv_v():
-    cv2.imshow("Task 1.1 - Image 1 - HSV H-Channel", hsv_1_1[:, :, 2])
+    cv2.imshow("Task 1.1 - Image 1 - HSV V-Channel", hsv_1_1[:, :, 2])
 
 
 # Exercise 1.1 - Image 2
@@ -94,18 +93,32 @@ def show_1_1_2_hsv_h():
 
 
 def show_1_1_2_hsv_s():
-    cv2.imshow("Task 1.1 - Image 2 - HSV H-Channel", hsv_1_2[:, :, 1])
+    cv2.imshow("Task 1.1 - Image 2 - HSV S-Channel", hsv_1_2[:, :, 1])
 
 
 def show_1_1_2_hsv_v():
-    cv2.imshow("Task 1.1 - Image 2 - HSV H-Channel", hsv_1_2[:, :, 2])
+    cv2.imshow("Task 1.1 - Image 2 - HSV V-Channel", hsv_1_2[:, :, 2])
 
 
 # Exercise 1.2 - Image 1
 def show_1_2_1_hsi():
     cv2.imshow("Task 1.2 - Image 1 - HSI", utils.rgb2hsi(rgb_1_1))
-    hsi_test = cv2.cvtColor(rgb_1_1, cv2.COLOR_RGB2HLS)
-    cv2.imshow("Comparison", hsi_test)
+
+
+def show1_2_1_hsv():
+    cv2.imshow("Task 1.2 - Image 1 - HSV", utils.rgb2hsv(rgb_1_1))
+
+
+def show1_2_1_hsv_h():
+    cv2.imshow("Task 1.2 - Image 1 - HSV H-Channel", utils.rgb2hsv(rgb_1_1)[:, :, 0])
+
+
+def show1_2_1_hsv_s():
+    cv2.imshow("Task 1.2 - Image 1 - HSV S-Channel", utils.rgb2hsv(rgb_1_1)[:, :, 1])
+
+
+def show1_2_1_hsv_v():
+    cv2.imshow("Task 1.2 - Image 1 - HSV V-CHannel", utils.rgb2hsv(rgb_1_1)[:, :, 2])
 
 
 def make_later(self):

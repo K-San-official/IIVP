@@ -50,10 +50,10 @@ class Gui:
     btn_1_2_i1_hsi_h = Button(root, text="H-Channel")
     btn_1_2_i1_hsi_s = Button(root, text="S-Channel")
     btn_1_2_i1_hsi_i = Button(root, text="I-Channel")
-    btn_1_2_i1_hsv = Button(root, text="HSV")
-    btn_1_2_i1_hsv_h = Button(root, text="H-Channel")
-    btn_1_2_i1_hsv_s = Button(root, text="S-Channel")
-    btn_1_2_i1_hsv_v = Button(root, text="V-Channel")
+    btn_1_2_i1_hsv = Button(root, text="HSV", command=e.show1_2_1_hsv)
+    btn_1_2_i1_hsv_h = Button(root, text="H-Channel", command=e.show1_2_1_hsv_h)
+    btn_1_2_i1_hsv_s = Button(root, text="S-Channel", command=e.show1_2_1_hsv_s)
+    btn_1_2_i1_hsv_v = Button(root, text="V-Channel", command=e.show1_2_1_hsv_v)
 
     btn_1_2_i2_hsi = Button(root, text="HSI")
     btn_1_2_i2_hsi_h = Button(root, text="H-Channel")
@@ -95,8 +95,12 @@ class Gui:
         self.label_ex1_2.grid(row=7, columnspan=2)
         self.btn_1_2_i1_hsi.grid(row=8, column=0)
 
-        self.root.mainloop()
+        self.btn_1_2_i1_hsv.grid(row=8, column=1)
+        self.btn_1_2_i1_hsv_h.grid(row=9, column=1)
+        self.btn_1_2_i1_hsv_s.grid(row=10, column=1)
+        self.btn_1_2_i1_hsv_v.grid(row=11, column=1)
 
+        self.root.mainloop()
 
 if __name__ == "__main__":
     application = Gui()

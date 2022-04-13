@@ -61,20 +61,17 @@ def rgb2hsv(img):
             delta = c_max - c_min
             if delta != 0:
                 if r == c_max:
-                    h = 60*(((g-b)/delta) % 6)
+                    h = (60*((g - b)/delta) + 360) % 360
                 elif g == c_max:
-                    h = 60 * (((g - b) / delta) % 6)
+                    h = (60*((b - r)/delta) + 120) % 360
                 elif b == c_max:
-                    h = 60 * (((g - b) / delta) % 6)
-
+                    h = (60*((r - g)/delta) + 240) % 360
             # S - saturation
             s = 0
             if c_max != 0:
                 s = delta/c_max
-
             # V - value
             v = c_max
-
             # assign new value
             hsv_img[j, k, :] = [h/360, s, v]
     return hsv_img
