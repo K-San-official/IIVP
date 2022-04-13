@@ -23,10 +23,6 @@ def show_1_1_rgb():
     cv2.imshow("Task 1.1 - Image 1 - RGB", rgb_1_1)
 
 
-def show_1_2_rgb():
-    cv2.imshow("Task 1.1 - Image 2 - RGB", rgb_1_2)
-
-
 def show_1_1_rgb_r():
     cv2.imshow("Task 1.1 - Image 1 - R-Channel", rgb_1_1[:, :, 0])
 
@@ -46,6 +42,18 @@ def show_1_2_original():
 
 def show_1_2_rgb():
     cv2.imshow("Task 1.1 - Image 2 - RGB", rgb_1_2)
+
+
+def show_1_2_rgb_r():
+    cv2.imshow("Task 1.1 - Image 2 - R-Channel", rgb_1_2[:, :, 0])
+
+
+def show_1_2_rgb_g():
+    cv2.imshow("Task 1.1 - Image 2 - G-Channel", rgb_1_2[:, :, 1])
+
+
+def show_1_2_rgb_b():
+    cv2.imshow("Task 1.1 - Image 2 - B-Channel", rgb_1_2[:, :, 2])
 
 
 def make_later(self):
