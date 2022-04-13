@@ -2,30 +2,55 @@ import cv2
 import utils
 
 
-"""
-Introduction to Image and Video Processing
-------------------------------------------
-Project 1:  spatial filtering, processing
-Date:       04/2022
-Author:     Konstantin Sandfort
-"""
-
+# --- Prepare images ---
 bgr_1_1 = cv2.imread("img/img_1_1.jpg")
 bgr_1_2 = cv2.imread("img/img_1_2.jpg")
 
+rgb_1_1 = cv2.cvtColor(bgr_1_1, cv2.COLOR_BGR2RGB)
+rgb_1_2 = cv2.cvtColor(bgr_1_2, cv2.COLOR_BGR2RGB)
 
+hsv_1_1 = cv2.cvtColor(rgb_1_1, cv2.COLOR_RGB2HSV)
+hsv_1_2 = cv2.cvtColor(rgb_1_2, cv2.COLOR_RGB2HSV)
+
+# --- Collection of functions to show images from the GUI ---
+
+# Exercise 1 - Image 1
 def show_1_1_original():
     cv2.imshow("Task 1.1 - Image 1 - Original", bgr_1_1)
 
 
-def make_later(self):
-    # Transform to RGB images
-    rgb_1_1 = cv2.cvtColor(bgr_1_1, cv2.COLOR_BGR2RGB)
-    rgb_1_2 = cv2.cvtColor(bgr_1_2, cv2.COLOR_BGR2RGB)
+def show_1_1_rgb():
+    cv2.imshow("Task 1.1 - Image 1 - RGB", rgb_1_1)
 
+
+def show_1_2_rgb():
+    cv2.imshow("Task 1.1 - Image 2 - RGB", rgb_1_2)
+
+
+def show_1_1_rgb_r():
+    cv2.imshow("Task 1.1 - Image 1 - R-Channel", rgb_1_1[:, :, 0])
+
+
+def show_1_1_rgb_g():
+    cv2.imshow("Task 1.1 - Image 1 - G-Channel", rgb_1_1[:, :, 1])
+
+
+def show_1_1_rgb_b():
+    cv2.imshow("Task 1.1 - Image 1 - B-Channel", rgb_1_1[:, :, 2])
+
+
+# Exercise 1 - Image 2
+def show_1_2_original():
+    cv2.imshow("Task 1.1 - Image 2 - Original", bgr_1_2)
+
+
+def show_1_2_rgb():
+    cv2.imshow("Task 1.1 - Image 2 - RGB", rgb_1_2)
+
+
+def make_later(self):
     # (1) --- Transformation from RGB to HSV ---------------------------------------------------------------------------
-    hsv_1_1 = cv2.cvtColor(rgb_1_1, cv2.COLOR_RGB2HSV)
-    hsv_1_2 = cv2.cvtColor(rgb_1_2, cv2.COLOR_RGB2HSV)
+
 
     # Show original image, HSV image and HSV channels
     cv2.imshow("1_1 - Original", bgr_1_1)
