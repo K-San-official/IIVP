@@ -1,12 +1,16 @@
 import math
 import numpy as np
 
+
 """
 Algorithms to solve image processing tasks are stored here.
 """
 
+popup = None
+
 
 def rgb2hsi(img):
+    print("Please wait, HSI image is getting processed!")
     # Translates an RGB image to an HSI image - Color Spaces (2)
     hsi_img = np.zeros(shape=(len(img), len(img[0]), 3))
     # Iterate over every pixel
@@ -24,23 +28,23 @@ def rgb2hsi(img):
                 m = min([r, g, b])
                 s = 1 - m/i
             # H - hue
-            numerator = 1/2*((r - g) + (r - b))
-            denominator = math.sqrt((r - g)**2 + ((r - b)*(g - b)))
-            if denominator == 0:  # avoid division by 0
-                h = 1
-            else:
-                h = math.acos(numerator/denominator)
-            if b < g:  # if Blue > Green
-                h = 360 - h
-            # Convert H from radians to degrees
-            h = h*180/math.pi
+            h = 360
+            numerator = 0.5*((r - g) + (r - b))
+            denominator = math.sqrt((r - g)**2 + ((r - b) * (g - b)))
+            if denominator != 0:
+                theta = (180.0/math.pi)*math.acos(numerator/denominator)
+                if b <= g:
+                    h = theta
+                else:
+                    h = 360 - theta
 
             # assign new value
-            hsi_img[j, k, :] = [h/255, s, i]  # OpenCV accepts numpy arrays as decimals in range [0, 1]
+            hsi_img[j, k, :] = [h/360, s, i]  # OpenCV accepts numpy arrays as decimals in range [0, 1]
     return hsi_img
 
 
 def rgb2hsv(img):
+    print("Please wait, HSV image is getting processed!")
     # Translates an RGB image to an HSV image - Color Spaces (2)
     hsv_img = np.zeros(shape=(len(img), len(img[0]), 3))
     # Iterate over every pixel
