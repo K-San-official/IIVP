@@ -1,6 +1,7 @@
 import cv2
 import utils
 
+
 """
 Introduction to Image and Video Processing
 ------------------------------------------
@@ -9,11 +10,15 @@ Date:       04/2022
 Author:     Konstantin Sandfort
 """
 
+bgr_1_1 = cv2.imread("img/img_1_1.jpg")
+bgr_1_2 = cv2.imread("img/img_1_2.jpg")
 
-def exercise1():
-    bgr_1_1 = cv2.imread("img/img_1_1.jpg")
-    bgr_1_2 = cv2.imread("img/img_1_2.jpg")
 
+def show_1_1_original():
+    cv2.imshow("Task 1.1 - Image 1 - Original", bgr_1_1)
+
+
+def make_later(self):
     # Transform to RGB images
     rgb_1_1 = cv2.cvtColor(bgr_1_1, cv2.COLOR_BGR2RGB)
     rgb_1_2 = cv2.cvtColor(bgr_1_2, cv2.COLOR_BGR2RGB)
@@ -43,20 +48,24 @@ def exercise1():
 
     # (2) --- Transformation from RGB to HSI/HSV manually --------------------------------------------------------------
 
+    # RGB to HSI
     hsi_1_1 = utils.rgb2hsi(rgb_1_1)
-
     cv2.imshow("1_1 HSI image", hsi_1_1)
+
+    # RGB to HSV
+    hsv_1_1 = utils.rgb2hsv(rgb_1_1)
+    cv2.imshow("1_1 HSV image", hsv_1_1)
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+    # RGB to HSI
+    hsi_1_2 = utils.rgb2hsi(rgb_1_2)
+    cv2.imshow("1_2 HSI image", hsi_1_2)
 
-if __name__ == "__main__":
-    """
-    This class gets executed at the start to give results for all exercises in the project
-    Algorithms for certain calculations are stored in utils.py to make the code more readable.
-    """
-    # Exercise 1 - Color Spaces
-    exercise1()
+    # RGB to HSV
+    hsv_1_2 = utils.rgb2hsv(rgb_1_2)
+    cv2.imshow("1_2 HSV image", hsv_1_2)
 
-
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()

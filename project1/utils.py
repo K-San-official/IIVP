@@ -1,4 +1,5 @@
 import math
+import numpy as np
 
 """
 Algorithms to solve image processing tasks are stored here.
@@ -7,10 +8,10 @@ Algorithms to solve image processing tasks are stored here.
 
 def rgb2hsi(img):
     # Translates an RGB image to an HSI image - Color Spaces (2)
-    hsi_img = img
+    hsi_img = np.zeros(shape=(len(img), len(img[0]), 3))
     # Iterate over every pixel
-    for j in range(len(hsi_img)):
-        for k in range(len(hsi_img[0])):
+    for j in range(len(img)):
+        for k in range(len(img[0])):
             # Get each component [r, g, b] in a range [0, 1]
             r = float(img[j, k, 0]/255)
             g = float(img[j, k, 1]/255)
@@ -35,8 +36,41 @@ def rgb2hsi(img):
             h = h*180/math.pi
 
             # assign new value
-            hsi_img[j, k, :] = [int(h), int(s*255), int(i*255)]
+            hsi_img[j, k, :] = [h/255, s, i]  # OpenCV accepts numpy arrays as decimals in range [0, 1]
     return hsi_img
 
+
 def rgb2hsv(img):
-    pass
+    # Translates an RGB image to an HSV image - Color Spaces (2)
+    hsv_img = np.zeros(shape=(len(img), len(img[0]), 3))
+    # Iterate over every pixel
+    for j in range(len(hsv_img)):
+        for k in range(len(hsv_img[0])):
+            r = float(img[j, k, 0] / 255)
+            g = float(img[j, k, 1] / 255)
+            b = float(img[j, k, 2] / 255)
+
+            # H - hue
+            h = 0
+            c_max = max([r, g, b])
+            c_min = min([r, g, b])
+            delta = c_max - c_min
+            if delta != 0:
+                if r == c_max:
+                    h = 60*(((g-b)/delta) % 6)
+                elif g == c_max:
+                    h = 60 * (((g - b) / delta) % 6)
+                elif b == c_max:
+                    h = 60 * (((g - b) / delta) % 6)
+
+            # S - saturation
+            s = 0
+            if c_max != 0:
+                s = delta/c_max
+
+            # V - value
+            v = c_max
+
+            # assign new value
+            hsv_img[j, k, :] = [h/360, s, v]
+    return hsv_img
