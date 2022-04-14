@@ -102,6 +102,7 @@ class Gui:
 
         self.root.mainloop()
 
+
 if __name__ == "__main__":
     application = Gui()
     application.create_GUI()
