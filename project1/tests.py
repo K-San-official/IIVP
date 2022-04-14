@@ -29,7 +29,7 @@ if __name__ == "__main__":
     hsi_test1 = [255, 255, 255]
     rgb_hsi_test(hsi_test1)
 
-    hsi_test2 = [10, 100, 255]
+    hsi_test2 = [10, 100, 20]
     rgb_hsi_test(hsi_test2)
 
 

@@ -84,15 +84,17 @@ def rgb2hsv_pixel(colour):
     if not (r == g == b):
         if delta != 0:
             if r == c_max:
-                h = (60 * ((g - b) / delta) + 360) % 360
+                h = 60*(g - b)/(c_max - c_min) # (60 * ((g - b) / delta) + 360) % 360
             elif g == c_max:
-                h = (60 * ((b - r) / delta) + 120) % 360
+                h = 120 + (60*(b - r)/(c_max - c_min)) # h = (60 * ((b - r) / delta) + 120) % 360
             elif b == c_max:
-                h = (60 * ((r - g) / delta) + 240) % 360
+                h = 240 + (60*(r - g)/(c_max - c_min)) # h = (60 * ((r - g) / delta) + 240) % 360
+    if h < 0:
+        h += 360
     # S - saturation
     s = 0
     if c_max != 0:
         s = delta / c_max
     # V - value
     v = c_max
-    return [h/360, s, v]
+    return [h/255/2, s, v]
