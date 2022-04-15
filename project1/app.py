@@ -79,9 +79,11 @@ class Gui:
     label_ex2_1 = Label(root, text="(1) - Histograms", font="Helvetica 12 bold", background="lightgray")
 
     # Image 1
+    btn_2_1_i1_original = Button(root, text="Original", command=e.show_2_1_1_original)
     btn_2_1_i1_hist = Button(root, text="Histogram 1", command=e.show_2_1_1_hist)
 
     # Image 2
+    btn_2_1_i2_original = Button(root, text="Original", command=e.show_2_1_2_original)
     btn_2_1_i2_hist = Button(root, text="Histogram 2", command=e.show_2_1_2_hist)
 
     # --- Exercise 2.2 -------------------------------------------------------------------------------------------------
@@ -94,7 +96,7 @@ class Gui:
 
 
     def create_GUI(self):
-        # --- Assign elements to grid layout
+        # --- Assign elements to grid layout ---------------------------------------------------------------------------
 
         # Exercise 1.1
         self.label_ex1.grid(row=0, columnspan=6)
@@ -154,8 +156,12 @@ class Gui:
         self.label_ex2_1.grid(row=14, columnspan=6)
 
         # Image 1
-        self.btn_2_1_i1_hist.grid(row=15, column=0)
-        self.btn_2_1_i2_hist.grid(row=15, column=3)
+        self.btn_2_1_i1_original.grid(row=15, column=0)
+        self.btn_2_1_i1_hist.grid(row=15, column=1)
+
+        # Image 2
+        self.btn_2_1_i2_original.grid(row=15, column=3)
+        self.btn_2_1_i2_hist.grid(row=15, column=4)
 
         # Start GUI
         self.root.mainloop()

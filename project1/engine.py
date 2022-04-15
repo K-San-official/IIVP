@@ -1,5 +1,6 @@
 import cv2
 import utils
+from matplotlib import pyplot as plt
 
 
 # --- Prepare images ---
@@ -11,6 +12,12 @@ rgb_1_2 = cv2.cvtColor(bgr_1_2, cv2.COLOR_BGR2RGB)
 
 hsv_1_1 = cv2.cvtColor(rgb_1_1, cv2.COLOR_RGB2HSV)
 hsv_1_2 = cv2.cvtColor(rgb_1_2, cv2.COLOR_RGB2HSV)
+
+bgr_2_1 = cv2.imread("img/img_2_1.jpg")
+bgr_2_2 = cv2.imread("img/img_2_2.jpg")
+
+gr_2_1 = cv2.cvtColor(bgr_2_1, cv2.COLOR_BGR2GRAY)
+gr_2_2 = cv2.cvtColor(bgr_2_2, cv2.COLOR_BGR2GRAY)
 
 #
 """
@@ -167,10 +174,24 @@ def show_1_2_2_hsv_v():
 
 
 # --- Exercise 2.1 - Image 1 -------------------------------------------------------------------------------------------
+def show_2_1_1_original():
+    cv2.imshow("Task 2.1 - Image 1 - Original", gr_2_1)
+
+
 def show_2_1_1_hist():
-    pass
+    hist1 = cv2.calcHist(gr_2_1, [0], None, [256], [0, 256])
+    plt.plot(hist1)
+    plt.title("Histogram - Image 1 - low contrast")
+    plt.show()
 
 
 # --- Exercise 2.1 - Image 2 -------------------------------------------------------------------------------------------
+def show_2_1_2_original():
+    cv2.imshow("Task 2.1 - Image 2 - Original", gr_2_2)
+
+
 def show_2_1_2_hist():
-    pass
+    hist2 = cv2.calcHist(gr_2_2, [0], None, [256], [0, 256])
+    plt.plot(hist2)
+    plt.title("Histogram - Image 2 - high contrast")
+    plt.show()
