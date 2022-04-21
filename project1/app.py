@@ -91,14 +91,16 @@ class Gui:
                         background="lightgray")
 
     # Image 1
+    btn_2_2_i1_npt = Button(root, text="NPT", command=e.show_2_2_1_neg)
 
     # Image 2
+    btn_2_2_i2_npt = Button(root, text="NPT", command=e.show_2_2_2_neg)
 
 
     def create_GUI(self):
         # --- Assign elements to grid layout ---------------------------------------------------------------------------
 
-        # Exercise 1.1
+        # --- Exercise 1.1 ---
         self.label_ex1.grid(row=0, columnspan=6)
         self.label_ex1_i1.grid(row=1, column=0)
         self.label_ex1_i2.grid(row=1, column=3)
@@ -126,7 +128,7 @@ class Gui:
         self.btn_1_1_i2_hsv_s.grid(row=5, column=5)
         self.btn_1_1_i2_hsv_v.grid(row=6, column=5)
 
-        # Exercise 1.2
+        # --- Exercise 1.2 ---
         self.label_ex1_2.grid(row=7, columnspan=6)
 
         # Image 1
@@ -148,8 +150,7 @@ class Gui:
         self.btn_1_2_i2_hsv_s.grid(row=10, column=4)
         self.btn_1_2_i2_hsv_v.grid(row=11, column=4)
 
-        # Exercise 2.1
-
+        # --- Exercise 2.1 ---
         self.label_ex2.grid(row=12, columnspan=6)
         self.label_ex2_i1.grid(row=13, column=0)
         self.label_ex2_i2.grid(row=13, column=3)
@@ -162,6 +163,15 @@ class Gui:
         # Image 2
         self.btn_2_1_i2_original.grid(row=15, column=3)
         self.btn_2_1_i2_hist.grid(row=15, column=4)
+
+        # --- Exercise 2.2 ---
+        self.label_ex2_2.grid(row=16, columnspan=6)
+
+        # Image 1
+        self.btn_2_2_i1_npt.grid(row=17, column=0)
+
+        # Image 2
+        self.btn_2_2_i2_npt.grid(row=17, column=3)
 
         # Start GUI
         self.root.mainloop()

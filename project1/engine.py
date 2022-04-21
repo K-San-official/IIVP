@@ -195,3 +195,14 @@ def show_2_1_2_hist():
     plt.plot(hist2)
     plt.title("Histogram - Image 2 - high contrast")
     plt.show()
+
+
+# --- Exercise 2.2 - Image 1 -------------------------------------------------------------------------------------------
+def show_2_2_1_neg():
+    cv2.imshow("Task 2.2 - Image 1 - Negative pointwise transform", utils.negative_piecewise_transform(gr_2_1))
+
+
+# --- Exercise 2.2 - Image 2 -------------------------------------------------------------------------------------------
+def show_2_2_2_neg():
+    cv2.imshow("Task 2.2 - Image 2 - Negative pointwise transform", utils.negative_piecewise_transform(gr_2_2))
+

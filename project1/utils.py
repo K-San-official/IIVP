@@ -98,3 +98,15 @@ def rgb2hsv_pixel(colour):
     # V - value
     v = c_max
     return [h/255/2, s, v]
+
+
+def negative_piecewise_transform(img):
+    print("Please wait, negative image is getting processed!")
+    neg_img = np.zeros(shape=(len(img), len(img[0])))
+    # Iterate over every pixel
+    for i in range(len(neg_img)):
+        for j in range(len(neg_img[0])):
+            # Reverse value and normalize in range [0, 1]
+            neg_img[i, j] = 1 - (img[i, j]/255)
+    return neg_img
+
