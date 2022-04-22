@@ -226,3 +226,45 @@ def show_2_3_2_hist():
     plt.show()
 
 
+def show_2_4_1_plpt():
+    pass
+
+
+def show_2_4_2_plpt():
+    pass
+
+
+def show_3_1_1_polar():
+    pass
+
+
+def show_3_1_2_polar():
+    pass
+
+
+def show_3_2_1_polar():
+    pass
+
+
+def show_3_2_2_polar():
+    pass
+
+
+def show_4_original():
+    pass
+
+
+def show_4_fdp():
+    pass
+
+
+def show_5_1_pn():
+    pass
+
+
+def show_5_2_fft():
+    pass
+
+
+def show_5_3_pnr():
+    pass
