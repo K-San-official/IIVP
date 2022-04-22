@@ -149,7 +149,7 @@ class Gui:
     # --- Exercise 5.3 -------------------------------------------------------------------------------------------------
     label_ex5_3 = Label(root, text="(3) - Periodic noise removal", font="Helvetica 12 bold", background="lightgray")
 
-    btn_5_2_pnr = Button(root, text="De-Noised Image", commmand=e.show_5_3_pnr)
+    btn_5_3_pnr = Button(root, text="De-Noised Image", commmand=e.show_5_3_pnr)
 
     def create_GUI(self):
         # --- Assign elements to grid layout ---
@@ -160,7 +160,6 @@ class Gui:
         self.label_ex1_i2.grid(row=1, column=3)
         self.label_ex1_1.grid(row=2, columnspan=6)
 
-        # Image 1
         self.btn_1_1_i1_original.grid(row=3, column=0)
         self.btn_1_1_i1_rgb.grid(row=3, column=1)
         self.btn_1_1_i1_rgb_r.grid(row=4, column=1)
@@ -171,7 +170,6 @@ class Gui:
         self.btn_1_1_i1_hsv_s.grid(row=5, column=2)
         self.btn_1_1_i1_hsv_v.grid(row=6, column=2)
 
-        # Image 1
         self.btn_1_1_i2_original.grid(row=3, column=3)
         self.btn_1_1_i2_rgb.grid(row=3, column=4)
         self.btn_1_1_i2_rgb_r.grid(row=4, column=4)
@@ -185,7 +183,6 @@ class Gui:
         # --- Exercise 1.2 ---
         self.label_ex1_2.grid(row=7, columnspan=6)
 
-        # Image 1
         self.btn_1_2_i1_hsi.grid(row=8, column=0)
         self.btn_1_2_i1_hsi_h.grid(row=9, column=0)
         self.btn_1_2_i1_hsi_s.grid(row=10, column=0)
@@ -210,37 +207,72 @@ class Gui:
         self.label_ex2_i2.grid(row=13, column=3)
         self.label_ex2_1.grid(row=14, columnspan=6)
 
-        # Image 1
         self.btn_2_1_i1_original.grid(row=15, column=0)
         self.btn_2_1_i1_hist.grid(row=15, column=1)
 
-        # Image 2
         self.btn_2_1_i2_original.grid(row=15, column=3)
         self.btn_2_1_i2_hist.grid(row=15, column=4)
 
         # --- Exercise 2.2 ---
         self.label_ex2_2.grid(row=16, columnspan=6)
 
-        # Image 1
         self.btn_2_2_i1_npt.grid(row=17, column=0)
 
-        # Image 2
         self.btn_2_2_i2_npt.grid(row=17, column=3)
 
         # --- Exercise 2.3 ---
         self.label_ex2_3.grid(row=18, columnspan=6)
 
-        # Image 1
         self.btn_2_3_i1_hist.grid(row=19, column=0)
 
-        # Image 2
         self.btn_2_3_i2_hist.grid(row=19, column=3)
 
+        # --- Exercise 2.4 ---
+        self.label_ex2_4.grid(row=20, columnspan=6)
 
+        self.btn_2_4_i1_plpt.grid(row=21, column=0)
 
+        self.btn_2_4_i2_plpt.grid(row=21, column=3)
 
+        # --- Exercise 3.1 ---
+        self.label_ex3.grid(row=22, columnspan=6)
+        self.label_ex3_i1.grid(row=23, column=0)
+        self.label_ex3_i2.grid(row=23, column=3)
+        self.label_ex3_1.grid(row=24, columnspan=6)
 
+        self.btn_3_1_i1.grid(row=25, column=0)
+        self.btn_3_1_i2.grid(row=25, column=3)
 
+        # --- Exercise 3.2 ---
+        self.label_ex3_2.grid(row=26, columnspan=6)
+
+        self.btn_3_2_i1.grid(row=27, column=0)
+        self.btn_3_2_i2.grid(row=27, column=3)
+
+        # --- Exercise 4 ---
+        self.label_ex4.grid(row=28, columnspan=6)
+
+        self.btn_4_original.grid(row=29, column=0)
+        self.btn_4_fdp.grid(row=29, column=1)
+
+        # --- Exercise 5.1 ---
+        self.label_ex5.grid(row=30, columnspan=6)
+
+        self.btn_5_original.grid(row=31, column=0)
+
+        self.label_ex5_1.grid(row=32, columnspan=6)
+
+        self.btn_5_1_pn.grid(row=33, column=0)
+
+        # --- Exercise 5.2 ---
+        self.label_ex5_2.grid(row=34, columnspan=6)
+
+        self.btn_5_2_fft.grid(row=35, column=0)
+
+        # --- Exercise 5.3 ---
+        self.label_ex5_3.grid(row=36, column=0)
+
+        self.btn_5_3_pnr.grid(row=37, column=0)
 
         # Start GUI
         self.root.mainloop()
