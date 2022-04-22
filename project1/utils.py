@@ -108,5 +108,5 @@ def negative_piecewise_transform(img):
         for j in range(len(neg_img[0])):
             # Reverse value and normalize in range [0, 1]
             neg_img[i, j] = 1 - (img[i, j]/255)
-    return neg_img
+    return np.float32(neg_img)
 

@@ -25,7 +25,6 @@ class Gui:
     label_ex1_1 = Label(root, text="(1) - From BGR to RGB and HSV WITH inbuilt functions",
                         font="Helvetica 12 bold", background="lightgray")
 
-    # Image 1
     btn_1_1_i1_original = Button(root, text="Original", command=e.show_1_1_1_original)
     btn_1_1_i1_rgb = Button(root, text="RGB", command=e.show_1_1_1_rgb)
     btn_1_1_i1_rgb_r = Button(root, text="R-Channel", command=e.show_1_1_1_rgb_r)
@@ -36,7 +35,6 @@ class Gui:
     btn_1_1_i1_hsv_s = Button(root, text="S-Channel", command=e.show_1_1_1_hsv_s)
     btn_1_1_i1_hsv_v = Button(root, text="V-Channel", command=e.show_1_1_1_hsv_v)
 
-    # Image 2
     btn_1_1_i2_original = Button(root, text="Original", command=e.show_1_1_2_original)
     btn_1_1_i2_rgb = Button(root, text="RGB", command=e.show_1_1_2_rgb)
     btn_1_1_i2_rgb_r = Button(root, text="R-Channel", command=e.show_1_1_2_rgb_r)
@@ -51,7 +49,6 @@ class Gui:
     label_ex1_2 = Label(root, text="(2) - From RGB to HSI and HSV WITHOUT inbuilt functions", font="Helvetica 12 bold",
                         background="lightgray")
 
-    # Image 1
     btn_1_2_i1_hsi = Button(root, text="HSI", command=e.show_1_2_1_hsi)
     btn_1_2_i1_hsi_h = Button(root, text="H-Channel", command=e.show_1_2_1_hsi_h)
     btn_1_2_i1_hsi_s = Button(root, text="S-Channel", command=e.show_1_2_1_hsi_s)
@@ -61,7 +58,6 @@ class Gui:
     btn_1_2_i1_hsv_s = Button(root, text="S-Channel", command=e.show_1_2_1_hsv_s)
     btn_1_2_i1_hsv_v = Button(root, text="V-Channel", command=e.show_1_2_1_hsv_v)
 
-    # Image 2
     btn_1_2_i2_hsi = Button(root, text="HSI", command=e.show_1_2_2_hsi)
     btn_1_2_i2_hsi_h = Button(root, text="H-Channel", command=e.show_1_2_2_hsi_h)
     btn_1_2_i2_hsi_s = Button(root, text="S-Channel", command=e.show_1_2_2_hsi_s)
@@ -78,11 +74,9 @@ class Gui:
     label_ex2_i2 = Label(root, text="Image 2 (high contrast)")
     label_ex2_1 = Label(root, text="(1) - Histograms", font="Helvetica 12 bold", background="lightgray")
 
-    # Image 1
     btn_2_1_i1_original = Button(root, text="Original", command=e.show_2_1_1_original)
     btn_2_1_i1_hist = Button(root, text="Histogram 1", command=e.show_2_1_1_hist)
 
-    # Image 2
     btn_2_1_i2_original = Button(root, text="Original", command=e.show_2_1_2_original)
     btn_2_1_i2_hist = Button(root, text="Histogram 2", command=e.show_2_1_2_hist)
 
@@ -90,15 +84,75 @@ class Gui:
     label_ex2_2 = Label(root, text="(2) - Negative Pointwise Transform", font="Helvetica 12 bold",
                         background="lightgray")
 
-    # Image 1
     btn_2_2_i1_npt = Button(root, text="NPT", command=e.show_2_2_1_neg)
 
-    # Image 2
     btn_2_2_i2_npt = Button(root, text="NPT", command=e.show_2_2_2_neg)
 
+    # --- Exercise 2.3 -------------------------------------------------------------------------------------------------
+    label_ex2_3 = Label(root, text="(3) - Negative Pointwise Transform Histograms", font="Helvetica 12 bold",
+                        background="lightgray")
+
+    btn_2_3_i1_hist = Button(root, text="NPT Histogram 1", command=e.show_2_3_1_hist)
+
+    btn_2_3_i2_hist = Button(root, text="NPT Histogram 2", command=e.show_2_3_2_hist)
+
+    # --- Exercise 2.3 -------------------------------------------------------------------------------------------------
+    label_ex2_4 = Label(root, text="(4) - Power Law Pointwise Transform", font="Helvetica 12 bold",
+                        background="lightgray")
+
+    btn_2_4_i1_plpt = Button(root, text="Power Law PT 1", command=e.show_2_4_1_plpt)
+
+    btn_2_4_i2_plpt = Button(root, text="Power Law PT 2", command=e.show_2_4_2_plpt)
+
+    # --- Exercise 3.1 -------------------------------------------------------------------------------------------------
+    label_ex3 = Label(root, text="3. Special Effects", font="Helvetica 18 bold",
+                      background="cyan")
+
+    label_ex3_i1 = Label(root, text="Image 1")
+    label_ex3_i2 = Label(root, text="Image 2")
+    label_ex3_1 = Label(root, text="(1) - Polar coordinates", font="Helvetica 12 bold", background="lightgray")
+
+    btn_3_1_i1 = Button(root, text="Polar Image 1", command=e.show_3_1_1_polar)
+
+    btn_3_1_i2 = Button(root, text="Polar Image 1", command=e.show_3_1_2_polar)
+
+    # --- Exercise 3.2 -------------------------------------------------------------------------------------------------
+    label_ex3_2 = Label(root, text="(2) - Cartoon", font="Helvetica 12 bold", background="lightgray")
+
+    btn_3_2_i1 = Button(root, text="Cartoon Image 1", command=e.show_3_2_1_polar)
+
+    btn_3_2_i2 = Button(root, text="Cartoon Image 1", command=e.show_3_2_2_polar)
+
+    # --- Exercise 4 ---------------------------------------------------------------------------------------------------
+    label_ex4 = Label(root, text="4. Frequency Domain Properties", font="Helvetica 18 bold",
+                      background="cyan")
+
+    btn_4_original = Button(root, text="Original", command=e.show_4_original)
+
+    btn_4_fdp = Button(root, text="Original", command=e.show_4_fdp)
+
+    # --- Exercise 5.1 -------------------------------------------------------------------------------------------------
+    label_ex5 = Label(root, text="5. Periodic noise removal", font="Helvetica 18 bold",
+                      background="cyan")
+
+    btn_5_original = Button(root, text="Original")
+
+    label_ex5_1 = Label(root, text="(1) - Periodic noise", font="Helvetica 12 bold", background="lightgray")
+
+    btn_5_1_pn = Button(root, text="Noisy Image", commmand=e.show_5_1_pn)
+
+    # --- Exercise 5.2 -------------------------------------------------------------------------------------------------
+    label_ex5_2 = Label(root, text="(2) - 2D FFT noisy Image", font="Helvetica 12 bold", background="lightgray")
+
+    btn_5_2_fft = Button(root, text="Noisy FFT Image", commmand=e.show_5_2_fft)
+
+    # --- Exercise 5.3 -------------------------------------------------------------------------------------------------
+    label_ex5_3 = Label(root, text="(3) - Periodic noise removal", font="Helvetica 12 bold", background="lightgray")
+
+    btn_5_2_pnr = Button(root, text="De-Noised Image", commmand=e.show_5_3_pnr)
 
     def create_GUI(self):
-        # --- Assign elements to grid layout ---------------------------------------------------------------------------
+        # --- Assign elements to grid layout ---
 
         # --- Exercise 1.1 ---
         self.label_ex1.grid(row=0, columnspan=6)
@@ -172,6 +226,21 @@ class Gui:
 
         # Image 2
         self.btn_2_2_i2_npt.grid(row=17, column=3)
+
+        # --- Exercise 2.3 ---
+        self.label_ex2_3.grid(row=18, columnspan=6)
+
+        # Image 1
+        self.btn_2_3_i1_hist.grid(row=19, column=0)
+
+        # Image 2
+        self.btn_2_3_i2_hist.grid(row=19, column=3)
+
+
+
+
+
+
 
         # Start GUI
         self.root.mainloop()

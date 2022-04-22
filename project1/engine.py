@@ -1,5 +1,6 @@
 import cv2
 import utils
+import numpy as np
 from matplotlib import pyplot as plt
 
 
@@ -179,8 +180,8 @@ def show_2_1_1_original():
 
 
 def show_2_1_1_hist():
-    hist1 = cv2.calcHist(gr_2_1, [0], None, [256], [0, 256])
-    plt.plot(hist1)
+    hist = cv2.calcHist(gr_2_1, [0], None, [256], [0, 256])
+    plt.plot(hist)
     plt.title("Histogram - Image 1 - low contrast")
     plt.show()
 
@@ -191,8 +192,8 @@ def show_2_1_2_original():
 
 
 def show_2_1_2_hist():
-    hist2 = cv2.calcHist(gr_2_2, [0], None, [256], [0, 256])
-    plt.plot(hist2)
+    hist = cv2.calcHist(gr_2_2, [0], None, [256], [0, 256])
+    plt.plot(hist)
     plt.title("Histogram - Image 2 - high contrast")
     plt.show()
 
@@ -205,4 +206,23 @@ def show_2_2_1_neg():
 # --- Exercise 2.2 - Image 2 -------------------------------------------------------------------------------------------
 def show_2_2_2_neg():
     cv2.imshow("Task 2.2 - Image 2 - Negative pointwise transform", utils.negative_piecewise_transform(gr_2_2))
+
+
+# --- Exercise 2.3 - Image 1 -------------------------------------------------------------------------------------------
+def show_2_3_1_hist():
+    neg = utils.negative_piecewise_transform(gr_2_1)
+    hist = cv2.calcHist(neg, [0], None, [256], [0, 1])
+    plt.plot(hist)
+    plt.title("Histogram NPT - Image 1 - low contrast")
+    plt.show()
+
+
+# --- Exercise 2.3 - Image 2 -------------------------------------------------------------------------------------------
+def show_2_3_2_hist():
+    neg = utils.negative_piecewise_transform(gr_2_2)
+    hist = cv2.calcHist(neg, [0], None, [256], [0, 1])
+    plt.plot(hist)
+    plt.title("Histogram NPT - Image 2 - high contrast")
+    plt.show()
+
 
