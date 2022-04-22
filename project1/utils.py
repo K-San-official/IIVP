@@ -100,7 +100,12 @@ def rgb2hsv_pixel(colour):
     return [h/255/2, s, v]
 
 
-def negative_piecewise_transform(img):
+def negative_pointwise_transform(img):
+    """
+    Returns a grayscale image of reversed intensity (negative image)
+    :param img:
+    :return:
+    """
     print("Please wait, negative image is getting processed!")
     neg_img = np.zeros(shape=(len(img), len(img[0])))
     # Iterate over every pixel
@@ -109,4 +114,25 @@ def negative_piecewise_transform(img):
             # Reverse value and normalize in range [0, 1]
             neg_img[i, j] = 1 - (img[i, j]/255)
     return np.float32(neg_img)
+
+
+def power_law_pointwise_transform(img, n):
+    """
+    Increases or decreases the contrast of a grayscale image depending on n
+    :param img:
+    :param n:
+    :return:
+    """
+    print("Please wait, image is getting processed according to the power law!")
+    if n < 0:
+        print("Error, n needs to be bigger than 0!")
+        return None
+    new_img = np.zeros(shape=(len(img), len(img[0])))
+    # Iterate over every pixel
+    for i in range(len(new_img)):
+        for j in range(len(new_img[0])):
+            # Reverse value and normalize in range [0, 1]
+            new_img[i, j] = (img[i, j]/255)**n
+    return np.float32(new_img)
+
 

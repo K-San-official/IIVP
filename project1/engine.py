@@ -200,17 +200,17 @@ def show_2_1_2_hist():
 
 # --- Exercise 2.2 - Image 1 -------------------------------------------------------------------------------------------
 def show_2_2_1_neg():
-    cv2.imshow("Task 2.2 - Image 1 - Negative pointwise transform", utils.negative_piecewise_transform(gr_2_1))
+    cv2.imshow("Task 2.2 - Image 1 - Negative pointwise transform", utils.negative_pointwise_transform(gr_2_1))
 
 
 # --- Exercise 2.2 - Image 2 -------------------------------------------------------------------------------------------
 def show_2_2_2_neg():
-    cv2.imshow("Task 2.2 - Image 2 - Negative pointwise transform", utils.negative_piecewise_transform(gr_2_2))
+    cv2.imshow("Task 2.2 - Image 2 - Negative pointwise transform", utils.negative_pointwise_transform(gr_2_2))
 
 
 # --- Exercise 2.3 - Image 1 -------------------------------------------------------------------------------------------
 def show_2_3_1_hist():
-    neg = utils.negative_piecewise_transform(gr_2_1)
+    neg = utils.negative_pointwise_transform(gr_2_1)
     hist = cv2.calcHist(neg, [0], None, [256], [0, 1])
     plt.plot(hist)
     plt.title("Histogram NPT - Image 1 - low contrast")
@@ -219,7 +219,7 @@ def show_2_3_1_hist():
 
 # --- Exercise 2.3 - Image 2 -------------------------------------------------------------------------------------------
 def show_2_3_2_hist():
-    neg = utils.negative_piecewise_transform(gr_2_2)
+    neg = utils.negative_pointwise_transform(gr_2_2)
     hist = cv2.calcHist(neg, [0], None, [256], [0, 1])
     plt.plot(hist)
     plt.title("Histogram NPT - Image 2 - high contrast")
@@ -227,11 +227,11 @@ def show_2_3_2_hist():
 
 
 def show_2_4_1_plpt():
-    pass
+    cv2.imshow("Task 2.4 - Image 1 - Higher contrast with Power Law", utils.power_law_pointwise_transform(gr_2_1, 5))
 
 
 def show_2_4_2_plpt():
-    pass
+    cv2.imshow("Task 2.4 - Image 2 - Lower contrast with Power Law", utils.power_law_pointwise_transform(gr_2_2, 0.2))
 
 
 def show_3_1_1_polar():
@@ -268,3 +268,4 @@ def show_5_2_fft():
 
 def show_5_3_pnr():
     pass
+

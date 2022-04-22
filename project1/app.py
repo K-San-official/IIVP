@@ -114,14 +114,14 @@ class Gui:
 
     btn_3_1_i1 = Button(root, text="Polar Image 1", command=e.show_3_1_1_polar)
 
-    btn_3_1_i2 = Button(root, text="Polar Image 1", command=e.show_3_1_2_polar)
+    btn_3_1_i2 = Button(root, text="Polar Image 2", command=e.show_3_1_2_polar)
 
     # --- Exercise 3.2 -------------------------------------------------------------------------------------------------
     label_ex3_2 = Label(root, text="(2) - Cartoon", font="Helvetica 12 bold", background="lightgray")
 
     btn_3_2_i1 = Button(root, text="Cartoon Image 1", command=e.show_3_2_1_polar)
 
-    btn_3_2_i2 = Button(root, text="Cartoon Image 1", command=e.show_3_2_2_polar)
+    btn_3_2_i2 = Button(root, text="Cartoon Image 2", command=e.show_3_2_2_polar)
 
     # --- Exercise 4 ---------------------------------------------------------------------------------------------------
     label_ex4 = Label(root, text="4. Frequency Domain Properties", font="Helvetica 18 bold",
@@ -129,7 +129,7 @@ class Gui:
 
     btn_4_original = Button(root, text="Original", command=e.show_4_original)
 
-    btn_4_fdp = Button(root, text="Original", command=e.show_4_fdp)
+    btn_4_fdp = Button(root, text="FDP", command=e.show_4_fdp)
 
     # --- Exercise 5.1 -------------------------------------------------------------------------------------------------
     label_ex5 = Label(root, text="5. Periodic noise removal", font="Helvetica 18 bold",
@@ -139,17 +139,17 @@ class Gui:
 
     label_ex5_1 = Label(root, text="(1) - Periodic noise", font="Helvetica 12 bold", background="lightgray")
 
-    btn_5_1_pn = Button(root, text="Noisy Image", commmand=e.show_5_1_pn)
+    btn_5_1_pn = Button(root, text="Noisy Image", command=e.show_5_1_pn)
 
     # --- Exercise 5.2 -------------------------------------------------------------------------------------------------
     label_ex5_2 = Label(root, text="(2) - 2D FFT noisy Image", font="Helvetica 12 bold", background="lightgray")
 
-    btn_5_2_fft = Button(root, text="Noisy FFT Image", commmand=e.show_5_2_fft)
+    btn_5_2_fft = Button(root, text="Noisy FFT Image", command=e.show_5_2_fft)
 
     # --- Exercise 5.3 -------------------------------------------------------------------------------------------------
     label_ex5_3 = Label(root, text="(3) - Periodic noise removal", font="Helvetica 12 bold", background="lightgray")
 
-    btn_5_3_pnr = Button(root, text="De-Noised Image", commmand=e.show_5_3_pnr)
+    btn_5_3_pnr = Button(root, text="De-Noised Image", command=e.show_5_3_pnr)
 
     def create_GUI(self):
         # --- Assign elements to grid layout ---
@@ -270,7 +270,7 @@ class Gui:
         self.btn_5_2_fft.grid(row=35, column=0)
 
         # --- Exercise 5.3 ---
-        self.label_ex5_3.grid(row=36, column=0)
+        self.label_ex5_3.grid(row=36, columnspan=6)
 
         self.btn_5_3_pnr.grid(row=37, column=0)
 
