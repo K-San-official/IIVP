@@ -136,3 +136,25 @@ def power_law_pointwise_transform(img, n):
     return np.float32(new_img)
 
 
+def normal_to_polar(img):
+    """
+    Converts an image into polar form
+    :param img:
+    :return:
+    """
+    new_img = np.zeros(shape=(len(img[0]), len(img), 3))
+    # For each pixel in the NEW image
+    center_x = int(len(img[0])/2)
+    center_y = int(len(img)/2)
+    for i in range(len(new_img)):
+        for j in range(len(new_img[0])):
+            angle = j/len(img)*2*math.pi
+            x_origin = int(center_x + (i*math.cos(angle)))
+            y_origin = int(center_y + (i*math.sin(angle)))
+            # check if it is out of the area
+            if x_origin < 0 or x_origin > len(img[0]) - 1 or y_origin < 0 or y_origin > len(img) - 1:
+                new_img[i, j] = [0, 0, 0]
+            else:
+                new_img[i, j] = img[y_origin, x_origin]/255
+
+    return np.float32(new_img)

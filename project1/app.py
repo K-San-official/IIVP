@@ -112,9 +112,11 @@ class Gui:
     label_ex3_i2 = Label(root, text="Image 2")
     label_ex3_1 = Label(root, text="(1) - Polar coordinates", font="Helvetica 12 bold", background="lightgray")
 
-    btn_3_1_i1 = Button(root, text="Polar Image 1", command=e.show_3_1_1_polar)
+    btn_3_1_i1_original = Button(text="Original", command=e.show_3_1_1_original)
+    btn_3_1_i1_polar = Button(root, text="Polar Image 1", command=e.show_3_1_1_polar)
 
-    btn_3_1_i2 = Button(root, text="Polar Image 2", command=e.show_3_1_2_polar)
+    btn_3_1_i2_original = Button(text="Original", command=e.show_3_1_2_original)
+    btn_3_1_i2_polar = Button(root, text="Polar Image 2", command=e.show_3_1_2_polar)
 
     # --- Exercise 3.2 -------------------------------------------------------------------------------------------------
     label_ex3_2 = Label(root, text="(2) - Cartoon", font="Helvetica 12 bold", background="lightgray")
@@ -240,8 +242,10 @@ class Gui:
         self.label_ex3_i2.grid(row=23, column=3)
         self.label_ex3_1.grid(row=24, columnspan=6)
 
-        self.btn_3_1_i1.grid(row=25, column=0)
-        self.btn_3_1_i2.grid(row=25, column=3)
+        self.btn_3_1_i1_original.grid(row=25, column=0)
+        self.btn_3_1_i1_polar.grid(row=25, column=1)
+        self.btn_3_1_i2_original.grid(row=25, column=3)
+        self.btn_3_1_i2_polar.grid(row=25, column=4)
 
         # --- Exercise 3.2 ---
         self.label_ex3_2.grid(row=26, columnspan=6)

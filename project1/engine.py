@@ -20,6 +20,9 @@ bgr_2_2 = cv2.imread("img/img_2_2.jpg")
 gr_2_1 = cv2.cvtColor(bgr_2_1, cv2.COLOR_BGR2GRAY)
 gr_2_2 = cv2.cvtColor(bgr_2_2, cv2.COLOR_BGR2GRAY)
 
+bgr_3_1 = cv2.imread("img/img_3_1.jpg")
+bgr_3_2 = cv2.imread("img/img_3_2.jpg")
+
 #
 """
 --- Collection of functions to show images from the GUI ----------------------------------------------------------------
@@ -226,20 +229,32 @@ def show_2_3_2_hist():
     plt.show()
 
 
+# --- Exercise 2.4 - Image 1 -------------------------------------------------------------------------------------------
 def show_2_4_1_plpt():
-    cv2.imshow("Task 2.4 - Image 1 - Higher contrast with Power Law", utils.power_law_pointwise_transform(gr_2_1, 5))
+    cv2.imshow("Task 2.4 - Image 1 - Higher contrast with Power Law", utils.power_law_pointwise_transform(gr_2_1, 2))
 
 
+# --- Exercise 2.4 - Image 2 -------------------------------------------------------------------------------------------
 def show_2_4_2_plpt():
-    cv2.imshow("Task 2.4 - Image 2 - Lower contrast with Power Law", utils.power_law_pointwise_transform(gr_2_2, 0.2))
+    cv2.imshow("Task 2.4 - Image 2 - Lower contrast with Power Law", utils.power_law_pointwise_transform(gr_2_2, 0.5))
+
+
+# --- Exercise 3.1 - Image 1 -------------------------------------------------------------------------------------------
+def show_3_1_1_original():
+    cv2.imshow("Task 3.1 - Image 1 - Original", bgr_3_1)
 
 
 def show_3_1_1_polar():
-    pass
+    cv2.imshow("Task 3.1 - Image 1 - Polar", utils.normal_to_polar(bgr_3_1))
+
+
+# --- Exercise 3.1 - Image 2 -------------------------------------------------------------------------------------------
+def show_3_1_2_original():
+    cv2.imshow("Task 3.1 - Image 2 - Original", bgr_3_2)
 
 
 def show_3_1_2_polar():
-    pass
+    cv2.imshow("Task 3.1 - Image 2 - Polar", utils.normal_to_polar(bgr_3_2))
 
 
 def show_3_2_1_polar():
