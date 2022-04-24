@@ -1,4 +1,6 @@
 import math
+
+import cv2
 import numpy as np
 """
 Algorithms to solve image processing tasks are stored here.
@@ -158,3 +160,76 @@ def normal_to_polar(img):
                 new_img[i, j] = img[y_origin, x_origin]/255
 
     return np.float32(new_img)
+
+
+def cartoonify(img, threshold, color_depth):
+    """
+    Converts an BGR image to a cartoonified version.
+    :param img:
+    :param threshold: from 0 to 1. The smaller, the more areas are black.
+    :param color_depth: number of colours for each channel
+    :return:
+    """
+    print("Please wait while the cartoon image is being processed. This might take a while.")
+    # Convert to grayscale image to measure intensities
+    gr_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # Step 1: Noise reduction using Gaussian Blur (7x7 kernel)
+    blurred = gaussian_blur(gr_img)
+    # Step 2: Gradient calculation using Sobel kernels
+    gradient = sobel_gradient(blurred)
+    cv2.imshow("gradient", gradient)
+    # Step 3: Reduce color range and make black if it is an edge
+    new_img = np.zeros(shape=(len(img), len(img[0]), 3))
+    for i in range(len(img)):
+        for j in range(len(img[0])):
+            if gradient[i, j] > threshold:
+                # Threshold for black outline
+                new_img[i, j] = [0, 0, 0]
+            else:
+                # Reduce to 2 colours for each channel
+                b = float(int((img[i, j, 0]/255) * color_depth)/color_depth)
+                g = float(int((img[i, j, 1]/255) * color_depth)/color_depth)
+                r = float(int((img[i, j, 2]/255) * color_depth)/color_depth)
+                new_img[i, j] = [b, g, r]
+    return new_img
+
+
+def gaussian_blur(img):
+    """
+    Uses a 7x7 gaussian kernel to make the image blurry and reduce noise.
+    :param img:
+    :return:
+    """
+    kernel = np.array([
+        [0, 0, 1, 2, 1, 0, 0],
+        [0, 3, 13, 22, 13, 3, 0],
+        [1, 13, 59, 97, 59, 13, 1],
+        [2, 22, 97, 159, 97, 22, 2],
+        [1, 13, 59, 97, 59, 13, 1],
+        [0, 3, 13, 22, 13, 3, 0],
+        [0, 0, 1, 2, 1, 0, 0]], np.float32)
+    y = np.pad(img, (3, 3), 'constant')
+    y = y/255
+    new_img = np.zeros(shape=(len(img), len(img[0])))
+    for i in range(len(img[0])):
+        for j in range(len(img)):
+            new_img[j, i] = np.sum(np.multiply(y[j:j + 7, i:i + 7], kernel))/1003
+    return new_img
+
+
+def sobel_gradient(img):
+    """
+    Applies Sobel kernel (3x3) to an image
+    :param img:
+    :return:
+    """
+    k_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], np.float32)
+    k_y = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]], np.float32)
+    new_img = np.zeros(shape=(len(img), len(img[0])))
+    y = np.pad(img, (1, 1), 'constant')
+    for i in range(len(img[0])):
+        for j in range(len(img)):
+            new_img[j, i] = abs(np.sum(np.multiply(y[j:j + 3, i:i + 3], k_x))) \
+                            + abs(np.sum(np.multiply(y[j:j + 3, i:i + 3], k_y)))
+    return new_img
+

@@ -121,9 +121,9 @@ class Gui:
     # --- Exercise 3.2 -------------------------------------------------------------------------------------------------
     label_ex3_2 = Label(root, text="(2) - Cartoon", font="Helvetica 12 bold", background="lightgray")
 
-    btn_3_2_i1 = Button(root, text="Cartoon Image 1", command=e.show_3_2_1_polar)
+    btn_3_2_i1 = Button(root, text="Cartoon Image 1", command=e.show_3_2_1_cartoon)
 
-    btn_3_2_i2 = Button(root, text="Cartoon Image 2", command=e.show_3_2_2_polar)
+    btn_3_2_i2 = Button(root, text="Cartoon Image 2", command=e.show_3_2_2_cartoon)
 
     # --- Exercise 4 ---------------------------------------------------------------------------------------------------
     label_ex4 = Label(root, text="4. Frequency Domain Properties", font="Helvetica 18 bold",
