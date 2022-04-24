@@ -23,6 +23,8 @@ gr_2_2 = cv2.cvtColor(bgr_2_2, cv2.COLOR_BGR2GRAY)
 bgr_3_1 = cv2.imread("img/img_3_1.jpg")
 bgr_3_2 = cv2.imread("img/img_3_2.jpg")
 
+bgr_4 = cv2.imread("img/img_4.jpg")
+bgr_4_t = cv2.imread("img/img_4_t.jpg")
 #
 """
 --- Collection of functions to show images from the GUI ----------------------------------------------------------------
@@ -266,11 +268,12 @@ def show_3_2_2_cartoon():
 
 
 def show_4_original():
-    pass
-
+    cv2.imshow("Task 4 - Original", bgr_4)
+    cv2.imshow("Task 4 - Translated", bgr_4_t)
 
 def show_4_fdp():
-    pass
+    cv2.imshow("Task 4 - Original Magnitude spectrum", utils.fft_magnitude(bgr_4))
+    cv2.imshow("Task 4 - Translated Magnitude spectrum", utils.fft_magnitude(bgr_4_t))
 
 
 def show_5_1_pn():

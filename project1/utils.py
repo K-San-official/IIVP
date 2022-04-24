@@ -233,3 +233,16 @@ def sobel_gradient(img):
                             + abs(np.sum(np.multiply(y[j:j + 3, i:i + 3], k_y)))
     return new_img
 
+
+def fft_magnitude(img):
+    """
+    Returns the magnitude spectrum of 2D FFT.
+    :param img:
+    :return:
+    """
+    img = img/255
+    f = np.fft.fft2(img)
+    f_2 = np.fft.fftshift(f)
+    magnitude_spectrum = 20*np.log(np.abs(f_2))
+    return magnitude_spectrum
+
