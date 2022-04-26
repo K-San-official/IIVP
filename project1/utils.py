@@ -171,10 +171,8 @@ def cartoonify(img, threshold, color_depth):
     :return:
     """
     print("Please wait while the cartoon image is being processed. This might take a while.")
-    # Convert to grayscale image to measure intensities
-    gr_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     # Step 1: Noise reduction using Gaussian Blur (7x7 kernel)
-    blurred = gaussian_blur(gr_img)
+    blurred = gaussian_blur(img)
     # Step 2: Gradient calculation using Sobel kernels
     gradient = sobel_gradient(blurred)
     cv2.imshow("gradient", gradient)
@@ -207,13 +205,9 @@ def gaussian_blur(img):
         [2, 22, 97, 159, 97, 22, 2],
         [1, 13, 59, 97, 59, 13, 1],
         [0, 3, 13, 22, 13, 3, 0],
-        [0, 0, 1, 2, 1, 0, 0]], np.float32)
-    y = np.pad(img, (3, 3), 'constant')
-    y = y/255
-    new_img = np.zeros(shape=(len(img), len(img[0])))
-    for i in range(len(img[0])):
-        for j in range(len(img)):
-            new_img[j, i] = np.sum(np.multiply(y[j:j + 7, i:i + 7], kernel))/1003
+        [0, 0, 1, 2, 1, 0, 0]], np.float32)/1003
+    new_img = cv2.filter2D(img, -1, kernel)
+    cv2.imshow("blurred", new_img)
     return new_img
 
 
@@ -225,12 +219,9 @@ def sobel_gradient(img):
     """
     k_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], np.float32)
     k_y = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]], np.float32)
-    new_img = np.zeros(shape=(len(img), len(img[0])))
-    y = np.pad(img, (1, 1), 'constant')
-    for i in range(len(img[0])):
-        for j in range(len(img)):
-            new_img[j, i] = abs(np.sum(np.multiply(y[j:j + 3, i:i + 3], k_x))) \
-                            + abs(np.sum(np.multiply(y[j:j + 3, i:i + 3], k_y)))
+    new_img_x = cv2.filter2D(img, -1, k_x)
+    new_img_y = cv2.filter2D(img, -1, k_y)
+    new_img = cv2.cvtColor((new_img_x + new_img_y), cv2.COLOR_BGR2GRAY)
     return new_img
 
 

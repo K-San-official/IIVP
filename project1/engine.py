@@ -259,12 +259,14 @@ def show_3_1_2_polar():
     cv2.imshow("Task 3.1 - Image 2 - Polar", utils.normal_to_polar(bgr_3_2))
 
 
+# --- Exercise 3.2 - Image 1 -------------------------------------------------------------------------------------------
 def show_3_2_1_cartoon():
-    cv2.imshow("Task 3.2 - Image 1 - Cartoon", utils.cartoonify(bgr_3_1, 0.5, 4))
+    cv2.imshow("Task 3.2 - Image 1 - Cartoon", utils.cartoonify(bgr_3_1, 0.1*255, 8))
 
 
+# --- Exercise 3.2 - Image 2 -------------------------------------------------------------------------------------------
 def show_3_2_2_cartoon():
-    cv2.imshow("Task 3.2 - Image 2 - Cartoon", utils.cartoonify(bgr_3_2, 0.5, 4))
+    cv2.imshow("Task 3.2 - Image 2 - Cartoon", utils.cartoonify(bgr_3_2, 0.15*255, 8))
 
 
 def show_4_original():
