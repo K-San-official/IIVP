@@ -233,7 +233,38 @@ def fft_magnitude(img):
     """
     img = img/255
     f = np.fft.fft2(img)
-    f_2 = np.fft.fftshift(f)
-    magnitude_spectrum = 20*np.log(np.abs(f_2))
+    fshift = np.fft.fftshift(f)
+    magnitude_spectrum = 20 * np.log(np.abs(fshift))
     return magnitude_spectrum
+
+
+def fft_transform(img):
+    img = img / 255
+    f = np.fft.fft2(img)
+    fshift = np.fft.fftshift(f)
+    return fshift
+
+
+def inverse_fft(img):
+    """
+    Converts an FFT magnitude spectrum back to an image in the spatial domain
+    :param img:
+    :return:
+    """
+    real = img.real
+    phases = img.imag
+    fft_img_shift_mod = np.empty(real.shape, dtype=complex)
+
+    fft_img_shift_mod.real = real
+    fft_img_shift_mod.imag = phases
+
+    fft_img_mod = np.fft.ifftshift(fft_img_shift_mod)
+    img_mod = np.fft.ifft2(fft_img_mod)
+    img_mod = np.abs(img_mod)
+
+    return img_mod*255
+
+    # f_ishift = np.fft.ifftshift(img)
+    # img_back = np.fft.ifft2(f_ishift)
+    # return img_back*255
 
