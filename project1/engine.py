@@ -264,12 +264,16 @@ def show_3_1_2_polar():
 
 # --- Exercise 3.2 - Image 1 -------------------------------------------------------------------------------------------
 def show_3_2_1_cartoon():
-    cv2.imshow("Task 3.2 - Image 1 - Cartoon", utils.cartoonify(bgr_3_1, 0.1*255, 8))
+    img_3_1_cartoon = utils.cartoonify(bgr_3_1, 0.1*255, 8)
+    cv2.imshow("Task 3.2 - Image 1 - Cartoon", img_3_1_cartoon)
+    cv2.imwrite("output/img_3_1_cartoon.jpg", img_3_1_cartoon*255)
 
 
 # --- Exercise 3.2 - Image 2 -------------------------------------------------------------------------------------------
 def show_3_2_2_cartoon():
-    cv2.imshow("Task 3.2 - Image 2 - Cartoon", utils.cartoonify(bgr_3_2, 0.15*255, 8))
+    img_3_2_cartoon = utils.cartoonify(bgr_3_2, 0.15*255, 8)
+    cv2.imshow("Task 3.2 - Image 2 - Cartoon", img_3_2_cartoon)
+    cv2.imwrite("output/img_3_2_cartoon.jpg", img_3_2_cartoon*255)
 
 
 def show_4_original():

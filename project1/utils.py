@@ -173,9 +173,11 @@ def cartoonify(img, threshold, color_depth):
     print("Please wait while the cartoon image is being processed. This might take a while.")
     # Step 1: Noise reduction using Gaussian Blur (7x7 kernel)
     blurred = gaussian_blur(img)
+    cv2.imwrite("output/blurred.jpg", blurred)
     # Step 2: Gradient calculation using Sobel kernels
     gradient = sobel_gradient(blurred)
     cv2.imshow("gradient", gradient)
+    cv2.imwrite("output/gradient.jpg", gradient)
     # Step 3: Reduce color range and make black if it is an edge
     new_img = np.zeros(shape=(len(img), len(img[0]), 3))
     for i in range(len(img)):
@@ -267,4 +269,14 @@ def inverse_fft(img):
     # f_ishift = np.fft.ifftshift(img)
     # img_back = np.fft.ifft2(f_ishift)
     # return img_back*255
+
+
+def add_periodic_noise(img):
+    """
+    Adds static periodic noise to an image
+    :param img:
+    :return:
+    """
+    amplitude = 1
+
 
