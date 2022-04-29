@@ -279,8 +279,8 @@ def add_periodic_noise(img):
     """
     amplitude = 0.3
     offset = 0 #shifts the intensity of the whole image
-    f_x = 1/5
-    f_y = 1/9
+    f_x = 1/3
+    f_y = 1/4
     img = img/255
     rows, cols = img.shape
     noise_img = np.zeros(shape=(len(img), len(img[0])))

@@ -137,7 +137,7 @@ class Gui:
     label_ex5 = Label(root, text="5. Periodic noise removal", font="Helvetica 18 bold",
                       background="cyan")
 
-    btn_5_original = Button(root, text="Original")
+    btn_5_original = Button(root, text="Original", command=e.show_5_original)
 
     label_ex5_1 = Label(root, text="(1) - Periodic noise", font="Helvetica 12 bold", background="lightgray")
 

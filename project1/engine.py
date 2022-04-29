@@ -26,9 +26,39 @@ bgr_3_2 = cv2.imread("img/img_3_2.jpg")
 bgr_4 = cv2.imread("img/img_4.jpg")
 bgr_4_t = cv2.imread("img/img_4_t.jpg")
 
+# Task 5 (source: https://docs.opencv.org/4.x/de/dbc/tutorial_py_fourier_transform.html)
+# All the images here get preprocessed once the app is started!
+
+# Load image
 bgr_5 = cv2.imread("img/img_5.jpg")
+# Convert to gray-scale image
 gr_5 = cv2.cvtColor(bgr_5, cv2.COLOR_BGR2GRAY)
+# Compute magnitude spectrum of original image
+original_fft = cv2.dft(np.float32(gr_5), flags=cv2.DFT_COMPLEX_OUTPUT)
+original_fft_shifted = np.fft.fftshift(original_fft)
+magnitude_spectrum_original = 20 * np.log(cv2.magnitude(original_fft_shifted[:, :, 0], original_fft_shifted[:, :, 1]))/255
+
+# Task 5.1 - Add periodic noise
 noisy_img = utils.add_periodic_noise(gr_5)
+
+# Task 5.2 - Show magnitude spectrum of noisy image
+noisy_fft = cv2.dft(np.float32(noisy_img), flags=cv2.DFT_COMPLEX_OUTPUT)
+noisy_fft_shifted = np.fft.fftshift(noisy_fft)
+magnitude_spectrum_noisy = 20 * np.log(cv2.magnitude(noisy_fft_shifted[:, :, 0], noisy_fft_shifted[:, :, 1]))/255
+
+# Task 5.3 - Remove noise
+rows, cols = gr_5.shape
+crow, ccol = rows / 2, cols / 2
+# Create mask of size 360px x 180px to filter out high frequencies (LPF)
+lpf = np.zeros((rows, cols, 2), np.uint8)
+lpf[int(crow) - 90:int(crow) + 90, int(ccol) - 160:int(ccol) + 160] = 1
+# Add mask to the frequency spectrum
+fft_filter = noisy_fft_shifted * lpf
+magnitude_spectrum_filter = 20 * np.log(cv2.magnitude(fft_filter[:, :, 0], fft_filter[:, :, 1]))/255
+# Inverse fft to re-construct original image without noise
+fft_filter_inverse = np.fft.ifftshift(fft_filter)
+img_back = cv2.idft(fft_filter_inverse)
+img_back = cv2.magnitude(img_back[:, :, 0], img_back[:, :, 1])/255/255/4
 
 """
 --- Collection of functions to show images from the GUI ----------------------------------------------------------------
@@ -288,27 +318,19 @@ def show_4_fdp():
     cv2.imshow("Task 4 - Translated Magnitude spectrum", fft[:, :, 0])
 
 
-def show_5_1_pn():
+def show_5_original():
     cv2.imshow("Task 5 - Original", gr_5)
+    cv2.imshow("Magnitude Spectrum - Original", magnitude_spectrum_original)
+
+def show_5_1_pn():
     cv2.imshow("Task 5.1 - Periodic Noise", noisy_img)
-
-    dft = cv2.dft(np.float32(gr_5), flags=cv2.DFT_COMPLEX_OUTPUT)
-    dft_shift = np.fft.fftshift(dft)
-    magnitude_spectrum = 20 * np.log(cv2.magnitude(dft_shift[:, :, 0], dft_shift[:, :, 1])) / 255
-
-    cv2.imshow("Test without noise", magnitude_spectrum)
-    # cv2.imshow("Task 5 - Magnitude spectrum", fft.real)
-    # cv2.imshow("Back to normal", utils.inverse_fft(fft).real)
 
 
 def show_5_2_fft():
-    dft = cv2.dft(np.float32(noisy_img), flags=cv2.DFT_COMPLEX_OUTPUT)
-    dft_shift = np.fft.fftshift(dft)
-    magnitude_spectrum = 20 * np.log(cv2.magnitude(dft_shift[:, :, 0], dft_shift[:, :, 1]))/255
-    cv2.imshow("FFT", magnitude_spectrum)
-    cv2.imwrite("output/noisy_fft.jpg", magnitude_spectrum)
+    cv2.imshow("Task 5.2 - Magnitude Spectrum - Noisy Image", magnitude_spectrum_noisy)
 
 
 def show_5_3_pnr():
-    pass
+    cv2.imshow("Task 5.3 - Filter Magnitude Spectrum", magnitude_spectrum_filter)
+    cv2.imshow("Task 5.3 - Re-constructed Image", img_back)
 
