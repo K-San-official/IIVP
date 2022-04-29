@@ -277,8 +277,8 @@ def add_periodic_noise(img):
     :param img:
     :return:
     """
-    amplitude = 0.25
-    offset = 0.5 #shifts the intensity of the whole image
+    amplitude = 0.3
+    offset = 0 #shifts the intensity of the whole image
     f_x = 1/5
     f_y = 1/9
     img = img/255
