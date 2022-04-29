@@ -277,6 +277,18 @@ def add_periodic_noise(img):
     :param img:
     :return:
     """
-    amplitude = 1
+    amplitude = 0.25
+    offset = 0.5 #shifts the intensity of the whole image
+    f_x = 1/5
+    f_y = 1/9
+    img = img/255
+    rows, cols = img.shape
+    noise_img = np.zeros(shape=(len(img), len(img[0])))
+    for i in range(len(img)):
+        for j in range(len(img[0])):
+            noise_img[i, j] = 1 - min(1, max(0, (amplitude*(math.sin(2*np.pi*f_x*j) + math.sin(2*np.pi*f_y*i))) + offset))
+    cv2.imwrite("output/noise.jpg", noise_img*255)
+    new_img = cv2.multiply(img, noise_img)
+    return new_img
 
 

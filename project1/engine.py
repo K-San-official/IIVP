@@ -28,7 +28,8 @@ bgr_4_t = cv2.imread("img/img_4_t.jpg")
 
 bgr_5 = cv2.imread("img/img_5.jpg")
 gr_5 = cv2.cvtColor(bgr_5, cv2.COLOR_BGR2GRAY)
-#
+noisy_img = utils.add_periodic_noise(gr_5)
+
 """
 --- Collection of functions to show images from the GUI ----------------------------------------------------------------
 Functions follow the following naming convention:
@@ -282,20 +283,30 @@ def show_4_original():
 
 
 def show_4_fdp():
-    cv2.imshow("Task 4 - Original Magnitude spectrum", utils.fft_magnitude(bgr_4))
-    fft = utils.fft_magnitude(bgr_4)
-    cv2.imshow("Task 4 - Translated Magnitude spectrum", fft.real)
+    cv2.imshow("Task 4 - Original Magnitude spectrum", utils.fft_magnitude(bgr_4)[:, :, 0])
+    fft = utils.fft_magnitude(bgr_4_t)
+    cv2.imshow("Task 4 - Translated Magnitude spectrum", fft[:, :, 0])
 
 
 def show_5_1_pn():
-    cv2.imshow("Task 5 - Original", gr_2_1)
-    fft = utils.fft_magnitude(gr_2_1)
-    cv2.imshow("Task 5 - Magnitude spectrum", fft.real)
-    cv2.imshow("Back to normal", utils.inverse_fft(fft).real)
+    cv2.imshow("Task 5 - Original", gr_5)
+    cv2.imshow("Task 5.1 - Periodic Noise", noisy_img)
+
+    dft = cv2.dft(np.float32(gr_5), flags=cv2.DFT_COMPLEX_OUTPUT)
+    dft_shift = np.fft.fftshift(dft)
+    magnitude_spectrum = 20 * np.log(cv2.magnitude(dft_shift[:, :, 0], dft_shift[:, :, 1])) / 255
+
+    cv2.imshow("Test without noise", magnitude_spectrum)
+    # cv2.imshow("Task 5 - Magnitude spectrum", fft.real)
+    # cv2.imshow("Back to normal", utils.inverse_fft(fft).real)
 
 
 def show_5_2_fft():
-    pass
+    dft = cv2.dft(np.float32(noisy_img), flags=cv2.DFT_COMPLEX_OUTPUT)
+    dft_shift = np.fft.fftshift(dft)
+    magnitude_spectrum = 20 * np.log(cv2.magnitude(dft_shift[:, :, 0], dft_shift[:, :, 1]))/255
+    cv2.imshow("FFT", magnitude_spectrum)
+    cv2.imwrite("output/noisy_fft.jpg", magnitude_spectrum)
 
 
 def show_5_3_pnr():
