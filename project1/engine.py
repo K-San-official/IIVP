@@ -46,6 +46,10 @@ noisy_fft = cv2.dft(np.float32(noisy_img), flags=cv2.DFT_COMPLEX_OUTPUT)
 noisy_fft_shifted = np.fft.fftshift(noisy_fft)
 magnitude_spectrum_noisy = 20 * np.log(cv2.magnitude(noisy_fft_shifted[:, :, 0], noisy_fft_shifted[:, :, 1]))/255
 
+# 1D power spectrum plot
+
+
+
 # Task 5.3 - Remove noise
 rows, cols = gr_5.shape
 crow, ccol = rows / 2, cols / 2
@@ -313,9 +317,8 @@ def show_4_original():
 
 
 def show_4_fdp():
-    cv2.imshow("Task 4 - Original Magnitude spectrum", utils.fft_magnitude(bgr_4)[:, :, 0])
-    fft = utils.fft_magnitude(bgr_4_t)
-    cv2.imshow("Task 4 - Translated Magnitude spectrum", fft[:, :, 0])
+    cv2.imshow("Task 4 - Original Magnitude spectrum", utils.fft_magnitude(bgr_4))
+    cv2.imshow("Task 4 - Translated Magnitude spectrum", utils.fft_magnitude((bgr_4_t)))
 
 
 def show_5_original():

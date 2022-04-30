@@ -233,42 +233,11 @@ def fft_magnitude(img):
     :param img:
     :return:
     """
-    img = img/255
-    f = np.fft.fft2(img)
-    fshift = np.fft.fftshift(f)
-    magnitude_spectrum = 20 * np.log(np.abs(fshift))
-    return magnitude_spectrum
-
-
-def fft_transform(img):
-    img = img / 255
-    f = np.fft.fft2(img)
-    fshift = np.fft.fftshift(f)
-    return fshift
-
-
-def inverse_fft(img):
-    """
-    Converts an FFT magnitude spectrum back to an image in the spatial domain
-    :param img:
-    :return:
-    """
-    real = img.real
-    phases = img.imag
-    fft_img_shift_mod = np.empty(real.shape, dtype=complex)
-
-    fft_img_shift_mod.real = real
-    fft_img_shift_mod.imag = phases
-
-    fft_img_mod = np.fft.ifftshift(fft_img_shift_mod)
-    img_mod = np.fft.ifft2(fft_img_mod)
-    img_mod = np.abs(img_mod)
-
-    return img_mod*255
-
-    # f_ishift = np.fft.ifftshift(img)
-    # img_back = np.fft.ifft2(f_ishift)
-    # return img_back*255
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    fft_img = cv2.dft(np.float32(img), flags=cv2.DFT_COMPLEX_OUTPUT)
+    fft_shift = np.fft.fftshift(fft_img)
+    magnitude_spectrum = 20 * np.log(cv2.magnitude(fft_shift[:, :, 0], fft_shift[:, :, 1]))
+    return magnitude_spectrum/255
 
 
 def add_periodic_noise(img):
@@ -278,7 +247,7 @@ def add_periodic_noise(img):
     :return:
     """
     amplitude = 0.3
-    offset = 0 #shifts the intensity of the whole image
+    offset = 0  #shifts the intensity of the whole image
     f_x = 1/3
     f_y = 1/4
     img = img/255
