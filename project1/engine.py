@@ -3,6 +3,8 @@ import utils
 import numpy as np
 from matplotlib import pyplot as plt
 
+# Delete all existing plots
+plt.clf()
 
 # --- Prepare images ---
 bgr_1_1 = cv2.imread("img/img_1_1.jpg")
@@ -47,15 +49,16 @@ noisy_fft_shifted = np.fft.fftshift(noisy_fft)
 magnitude_spectrum_noisy = 20 * np.log(cv2.magnitude(noisy_fft_shifted[:, :, 0], noisy_fft_shifted[:, :, 1]))/255
 
 # 1D power spectrum plot
-
-
+utils.plot_1d(magnitude_spectrum_noisy)
+# 3D power spectrum plot
+utils.plot_3d(magnitude_spectrum_noisy)
 
 # Task 5.3 - Remove noise
 rows, cols = gr_5.shape
 crow, ccol = rows / 2, cols / 2
 # Create mask of size 360px x 180px to filter out high frequencies (LPF)
 lpf = np.zeros((rows, cols, 2), np.uint8)
-lpf[int(crow) - 90:int(crow) + 90, int(ccol) - 160:int(ccol) + 160] = 1
+lpf[int(crow) - 90:int(crow) + 90, int(ccol) - 170:int(ccol) + 170] = 1
 # Add mask to the frequency spectrum
 fft_filter = noisy_fft_shifted * lpf
 magnitude_spectrum_filter = 20 * np.log(cv2.magnitude(fft_filter[:, :, 0], fft_filter[:, :, 1]))/255
@@ -63,6 +66,12 @@ magnitude_spectrum_filter = 20 * np.log(cv2.magnitude(fft_filter[:, :, 0], fft_f
 fft_filter_inverse = np.fft.ifftshift(fft_filter)
 img_back = cv2.idft(fft_filter_inverse)
 img_back = cv2.magnitude(img_back[:, :, 0], img_back[:, :, 1])/255/255/4
+
+# 1D power spectrum plot
+utils.plot_1d(magnitude_spectrum_filter)
+
+# 3D power spectrum plot
+utils.plot_3d(magnitude_spectrum_filter)
 
 """
 --- Collection of functions to show images from the GUI ----------------------------------------------------------------
