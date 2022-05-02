@@ -6,7 +6,6 @@ from matplotlib import pyplot as plt
 from matplotlib.pyplot import figure
 from mpl_toolkits.mplot3d import Axes3D
 
-
 """
 Algorithms to solve image processing tasks are stored here.
 """
