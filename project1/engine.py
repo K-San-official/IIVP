@@ -35,23 +35,24 @@ bgr_4_t = cv2.imread("img/img_4_t.jpg")
 bgr_5 = cv2.imread("img/img_5.jpg")
 # Convert to gray-scale image
 gr_5 = cv2.cvtColor(bgr_5, cv2.COLOR_BGR2GRAY)
-# Compute magnitude spectrum of original image
+# Compute power spectrum of original image
 original_fft = cv2.dft(np.float32(gr_5), flags=cv2.DFT_COMPLEX_OUTPUT)
 original_fft_shifted = np.fft.fftshift(original_fft)
-magnitude_spectrum_original = 20 * np.log(cv2.magnitude(original_fft_shifted[:, :, 0], original_fft_shifted[:, :, 1]))/255
+magnitude_spectrum_original = (20 * np.log(cv2.magnitude(original_fft_shifted[:, :, 0], original_fft_shifted[:, :, 1]))/255)**2
 
 # Task 5.1 - Add periodic noise
 noisy_img = utils.add_periodic_noise(gr_5)
 
-# Task 5.2 - Show magnitude spectrum of noisy image
+# Task 5.2 - Show power spectrum of noisy image
 noisy_fft = cv2.dft(np.float32(noisy_img), flags=cv2.DFT_COMPLEX_OUTPUT)
 noisy_fft_shifted = np.fft.fftshift(noisy_fft)
-magnitude_spectrum_noisy = 20 * np.log(cv2.magnitude(noisy_fft_shifted[:, :, 0], noisy_fft_shifted[:, :, 1]))/255
+power_spectrum_noisy = (20 * np.log(cv2.magnitude(noisy_fft_shifted[:, :, 0], noisy_fft_shifted[:, :, 1])) / 255)**2
 
 # 1D power spectrum plot
-utils.plot_1d(magnitude_spectrum_noisy)
+utils.plot_1d_x(power_spectrum_noisy)
+utils.plot_1d_y(power_spectrum_noisy)
 # 3D power spectrum plot
-utils.plot_3d(magnitude_spectrum_noisy)
+utils.plot_3d(power_spectrum_noisy)
 
 # Task 5.3 - Remove noise
 rows, cols = gr_5.shape
@@ -59,19 +60,21 @@ crow, ccol = rows / 2, cols / 2
 # Create mask of size 360px x 180px to filter out high frequencies (LPF)
 lpf = np.zeros((rows, cols, 2), np.uint8)
 lpf[int(crow) - 90:int(crow) + 90, int(ccol) - 170:int(ccol) + 170] = 1
+cv2.imshow("LPF", lpf[:, :, 0]*255)
 # Add mask to the frequency spectrum
 fft_filter = noisy_fft_shifted * lpf
-magnitude_spectrum_filter = 20 * np.log(cv2.magnitude(fft_filter[:, :, 0], fft_filter[:, :, 1]))/255
+power_spectrum_filter = (20 * np.log(cv2.magnitude(fft_filter[:, :, 0], fft_filter[:, :, 1])) / 255)**2
 # Inverse fft to re-construct original image without noise
 fft_filter_inverse = np.fft.ifftshift(fft_filter)
 img_back = cv2.idft(fft_filter_inverse)
 img_back = cv2.magnitude(img_back[:, :, 0], img_back[:, :, 1])/255/255/4
 
 # 1D power spectrum plot
-utils.plot_1d(magnitude_spectrum_filter)
+utils.plot_1d_x(power_spectrum_filter)
+utils.plot_1d_y(power_spectrum_filter)
 
 # 3D power spectrum plot
-utils.plot_3d(magnitude_spectrum_filter)
+utils.plot_3d(power_spectrum_filter)
 
 """
 --- Collection of functions to show images from the GUI ----------------------------------------------------------------
@@ -280,7 +283,12 @@ def show_2_3_2_hist():
 
 # --- Exercise 2.4 - Image 1 -------------------------------------------------------------------------------------------
 def show_2_4_1_plpt():
-    cv2.imshow("Task 2.4 - Image 1 - Higher contrast with Power Law", utils.power_law_pointwise_transform(gr_2_1, 2))
+    pl = utils.power_law_pointwise_transform(gr_2_1, 2)
+    cv2.imshow("Task 2.4 - Image 1 - Higher contrast with Power Law", pl)
+    hist = cv2.calcHist([pl], [0], None, [256], [0, 1])
+    plt.plot(hist)
+    plt.title("Histogram Power Law - Image 1 - n = 2")
+    plt.show()
 
 
 # --- Exercise 2.4 - Image 2 -------------------------------------------------------------------------------------------
@@ -339,10 +347,10 @@ def show_5_1_pn():
 
 
 def show_5_2_fft():
-    cv2.imshow("Task 5.2 - Magnitude Spectrum - Noisy Image", magnitude_spectrum_noisy)
+    cv2.imshow("Task 5.2 - Magnitude Spectrum - Noisy Image", power_spectrum_noisy)
 
 
 def show_5_3_pnr():
-    cv2.imshow("Task 5.3 - Filter Magnitude Spectrum", magnitude_spectrum_filter)
+    cv2.imshow("Task 5.3 - Filter Magnitude Spectrum", power_spectrum_filter)
     cv2.imshow("Task 5.3 - Re-constructed Image", img_back)
 

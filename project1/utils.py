@@ -265,28 +265,36 @@ def add_periodic_noise(img):
     return new_img
 
 
-def plot_1d(mag_spec):
+def plot_1d_x(power_spec):
     """
     Plots a 1D power spectrum of a magnitude spectrum
-    :param mag_spec:
+    :param power_spec:
     :return:
     """
-    plt.plot(mag_spec[int(mag_spec.shape[0]/2), :]**2)
-    plt.title("1D power spectrum")
+    plt.plot(power_spec[int(power_spec.shape[0]/2), :])
+    plt.title("1D power spectrum x-axis")
+    plt.xlim([0, 600])
     plt.show()
 
 
-def plot_3d(mag_spec):
+def plot_1d_y(power_spec):
+    plt.plot(power_spec[:, int(power_spec.shape[1] / 2)])
+    plt.title("1D power spectrum y-axis")
+    plt.xlim([0, 400])
+    plt.show()
+
+
+def plot_3d(power_spec):
     """
     Plots a 3D power spectrum of a magnitude spectrum
     Source: https://stackoverflow.com/questions/52781845/how-to-plot-3d-graphics-with-the-values-of-each-pixel-of-the-image
-    :param mag_spec:
+    :param power_spec:
     :return:
     """
     ax = plt.axes(projection="3d")
-    y = range(mag_spec.shape[0])
-    x = range(mag_spec.shape[1])
+    y = range(power_spec.shape[0])
+    x = range(power_spec.shape[1])
     x_p, y_p = np.meshgrid(x, y)
-    ax.plot_surface(x_p, y_p, mag_spec[:, :]**2, cmap="plasma")
+    ax.plot_surface(x_p, y_p, power_spec[:, :], cmap="plasma")
     plt.title("3D power spectrum")
     plt.show()
