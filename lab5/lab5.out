@@ -1,0 +1,7 @@
+\BOOKMARK [1][-]{section.1}{Removal of DC component}{}% 1
+\BOOKMARK [1][-]{section.2}{Periodic Noise Removal - Notch Filter}{}% 2
+\BOOKMARK [1][-]{section.3}{Additive Noise Removal - Wiener Filter}{}% 3
+\BOOKMARK [1][-]{section.4}{Image degradation and restoration}{}% 4
+\BOOKMARK [2][-]{subsection.4.1}{Image degradation with motion blur and additive noise}{section.4}% 5
+\BOOKMARK [2][-]{subsection.4.2}{Image restoration with Wiener filter}{section.4}% 6
+\BOOKMARK [2][-]{subsection.4.3}{Image denoising}{section.4}% 7

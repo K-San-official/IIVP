@@ -1,0 +1,103 @@
+\documentclass[a4paper]{article}
+
+\usepackage{fullpage} % Package to use full page
+\usepackage{parskip} % Package to tweak paragraph skipping
+\usepackage{tikz} % Package for drawing
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+\title{Introduction to Image and Video Processing \\ Lab 5: Image restoration}
+%\author{Vincent Knight}
+\date{Spring 2022}
+
+
+\begin{document}
+
+
+\maketitle
+
+
+\section{Removal of DC component}
+
+Read a $M \times N$ image and find its FT, centered around $(M/2,N/2)$. Remove its DC component and display the filtered image. What do you observe? Why?
+
+
+
+\section{Periodic Noise Removal - Notch Filter}
+
+In this exercise you have to create additive periodic noise and add it to an image. The you have to create a notch filter to remove the periodic noise. We make the assumption that the frequency of the periodic noise is \textbf{known}.
+\begin{itemize}
+\item Create periodic noise with dimensions equal to the image size and frequency $f_0$ in $x$ and/or $y$ directions. The periodicity can be created by using a 2D sin or cos. Frequency variations can be horizontal, vertical and/or diagonal. You can multiply the noise magnitude with a constant of your choice.
+\item Read an image and add periodic noise. Display the image and its FT before and after the addition of noise.
+\item Consider that the periodic noise frequency (or frequencies, if different in $x$ and $y$ directions) is known. Create an Ideal notch filter around the noise frequency. Explain how you create it based on properties of the FT. For both filters, do the following:
+\begin{itemize}
+\item Display the filter in 2D and 1D plots.
+\item Apply the filter to the image and display the result. What do you observe?
+\end{itemize}
+\end{itemize}
+
+
+
+\section{Additive Noise Removal - Wiener Filter}
+
+In this exercise you will create an image affected only by additive noise, i.e. with degradation function $H(u,v) = 1$:
+$G(u,v)= F(u,v)+N(u,v)$, where $G(u,v)$ is the FT of the degraded image and $N(u,v)$ of the additive noise.
+\begin{itemize}
+\item Create additive random noise, of the same size as the image, using the inbuilt Matlab function randn.
+\item Add the noise to the image to create a noisy image $g(x,y)$ with DFT $G(u,v)$.
+\item Assume we known the noise-to-signal power spectrum $S_n(u,v)/S_f(u,v)$, where $S_n(u,v)= |N(u,v)^2|$, $S_f(u,v)= |F(u,v)^2|$ (but not the power spectrum of the noise or the power spectrum of the original signal). Use this information to create a Wiener filter to restore an approximation of the original image. \textit{In your program, use your own knowledge of $S_n$ and $S_f$ to create the ratio $S_n/S_f$, and use the ratio in the code to create the Wiener filter}
+\item Apply the filter(s) to the image and display the result. What do you observe?
+\end{itemize}
+
+
+\section{Image degradation and restoration}
+
+\subsection{Image degradation with motion blur and additive noise}
+
+Create the following motion blurring degradation function. For $sinc(x) = sin(x)/x$ use ``sinc'' in Matlab:
+$$ H(u,v) = sinc(\alpha \cdot u + \beta \cdot v)\cdot \exp(-j\pi (\alpha \cdot u + \beta \cdot v)),~\textrm{for} ~\alpha = 0.13, \beta = 0  $$
+Here $(u,v)$ need to be have values from $-1$ to $1$, and their length needs to be equal to the corresponding dimensions of the image $n_1$ and $n_2$. You need to create them with the ``meshgrid'' function, and make sure the spacing from $-1$ to $1$ produces $n_1$ points for $u$ and $n_2$ points for $v$. 
+\begin{enumerate}
+\item Read the $n_1 \times n_2$ image ``win1'' and apply motion blurr to it, by multiplying its FT with $H$.
+\item Apply additive Gaussian noise \textit{to the motion blurred image} using the function ``imnoise'' with $\mu = 0,~\sigma^2=0.002 $. {\textit{Note: in imnoise, the image needs to be converted to uint with ``uint8''. Use the magnitude of the image intensity (with ``abs'') in the argument of uint8.}}
+\item Compute the inverse FT and display the image degraded by motion blur and additive noise.
+\end{enumerate}
+
+
+\subsection{Image restoration with Wiener filter}
+
+\begin{enumerate}
+\item  Create Wiener filters for the degraded image as follows:
+\begin{enumerate}
+\item Assume the original $x$ and degraded images $x_n$ are both known. From these, find an approximation of the noise:
+$$ n \sim x-x_n$$
+Use this to approximate the noise power spectrum, given by 
+$$ S_{n}(u,v)=|N(u,v)|^2,~\textrm{where}~|N(u,v)|~\textrm{is the FT of the noise} ~n(x,y)$$
+\item Find the power spectrum of the original image from 
+$$S_{f}(u,v)= |F(u,v)|^2,~\textrm{where}~|F(u,v)|~\textrm{is the FT of the image} ~f(x,y)$$
+\item Find the Wiener filter for noisy, motion blurred images by:
+$$ H_W(u,v) = \biggl[ \frac{1}{H(u,v)} \frac{|H(u,v)|^2}{|H(u,v)|^2 + S_n(u,v)/S_f(u,v)}  \biggr]$$
+\end{enumerate}
+\item Apply the Wiener filter to the image degraded by motion blur and noise. 
+\item Display the restored image and its FT.
+\end{enumerate}
+
+
+
+\subsection{Image denoising}
+
+\begin{enumerate}
+\item Read the original image original.jpg and its noisy version noisy.tif provided in this folder. Compare the noisy image with the original using MSE as a baseline.
+\item Restore the image trying to minimize the MSE baseline as much as possible, using the following methods:
+\begin{enumerate}
+\item Gaussian filter
+\item Median Filter
+\item Wiener filter (you can use the inbuilt function from scipy).
+\end{enumerate}
+\end{enumerate}
+
+
+\end{document}
+
+\textcolor{blue}{\href{https://colab.research.google.com/drive/1GKWXZIc3d_Fp_pgPPLVhMfTOZvUZNq12?usp=sharing}{Solution (python implementation)}}
+
