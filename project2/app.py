@@ -22,18 +22,39 @@ def motion_blur_filter(h, w):
     h = np.sinc((a * u + b * v)) * np.exp(-1j * np.pi * (a * u + b * v))
     return h
 
+def blackAndWhite(img, t1, t2, t3):
+    """
+    Converts a BGR image to a black-and-white image
+    :param img:
+    :param t1: blue channel threshold
+    :param t2: green channel threshold
+    :param t3: red channel threshold
+    :return:
+    """
+    # Divide into three channels
+    c1 = img[:, :, 0]
+    c2 = img[:, :, 1]
+    c3 = img[:, :, 2]
+    (thresh, bw1) = cv2.threshold(c1, t1, 255, cv2.THRESH_BINARY)
+    (thresh, bw2) = cv2.threshold(c2, t2, 255, cv2.THRESH_BINARY)
+    (thresh, bw3) = cv2.threshold(c3, t3, 255, cv2.THRESH_BINARY)
+    bw = np.maximum(bw1, bw2)
+    bw = np.maximum(bw, bw3)
+    print(bw)
+    return bw
+
 # ----------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    # Read images for the exercises
 
+    # --- Exercise 1 ---------------------------------------------------------------------------------------------------
+
+    """
     img_1_1 = cv2.imread("img/bird.jpg")
     img_1_1 = img_1_1.astype(np.double)
     img_1_2 = cv2.imread("img/geese.jpg")
     img_1_2 = img_1_2.astype(np.double)
-    cv2.imshow("Original", img_1_1/255)
-
-    # --- Exercise 1 ---------------------------------------------------------------------------------------------------
+    cv2.imshow("Original", img_1_1 / 255)
 
     cv2.imshow("Original", img_1_1/255)
 
@@ -58,6 +79,10 @@ if __name__ == "__main__":
     cv2.destroyAllWindows()
 
     """
+
+
+    """
+    # From the lab
     x = cv2.imread("img/bird.jpg")
     x = x.astype(np.double)
 
@@ -85,3 +110,14 @@ if __name__ == "__main__":
     cv2.destroyAllWindows()
     """
 
+    # --- Exercise 3 ---------------------------------------------------------------------------------------------------
+
+    img_3_1 = cv2.imread("img/oranges.jpg")
+    img_3_2 = cv2.imread("img/orangetree.jpg")
+
+    # Pre-processing (black and white)
+    img_3_1_bw = blackAndWhite(img_3_1, 100, 100, 100)
+    cv2.imshow("BW", img_3_1_bw/255)
+
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
