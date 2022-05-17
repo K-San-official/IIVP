@@ -14,14 +14,26 @@ def save_image(name, file):
     cv2.imwrite(path, file)
 
 
-def motion_blur_filter(h, w):
-    [u, v] = np.mgrid[-h/2:h/2, -w/2:w/2]
-    u = 2 * u/h
-    v = 2 * v/w
-    a = 0.22  # alpha
-    b = 0.22  # beta
-    h = np.sinc((a * u + b * v)) * np.exp(-1j * np.pi * (a * u + b * v))
-    return h
+def motion_blur_filter(img, a, b):
+
+    (c1, c2, c3) = cv2.split(img)
+    c1_new = motion_blur_channel(c1, a, b).astype(np.uint8)
+    c2_new = motion_blur_channel(c2, a, b).astype(np.uint8)
+    c3_new = motion_blur_channel(c3, a, b).astype(np.uint8)
+    return cv2.merge((c1_new, c2_new, c3_new))
+
+
+def motion_blur_channel(c, a, b):
+    height, width = c.shape
+    c_fft = np.fft.fft2(c)
+    [u, v] = np.mgrid[0:height, 0:width]
+    u = 2 * u / height
+    v = 2 * v / width
+    h = np.sinc((u * a + v * b)) * np.exp(-1j * np.pi * (u * a + v * b))
+    # h = (np.sin(np.pi * y) / np.pi * y) * np.exp(-1j * np.pi * y)
+    # h = np.repeat(h[:, :, np.newaxis], 3, axis=2)
+    return cv2.normalize(np.abs(np.fft.ifft2(c_fft * h)), None, 0, 255, cv2.NORM_MINMAX)
+
 
 def blackAndWhite(img, t1, t2, t3):
     """
@@ -71,73 +83,21 @@ def granulometry(img, k_s_start, factor, iterations):
 
 # ----------------------------------------------------------------------------------------------------------------------
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     # --- Exercise 1 ---------------------------------------------------------------------------------------------------
 
-    """
-    img_1_1 = cv2.imread("img/bird.jpg")
-    img_1_1 = img_1_1.astype(np.double)
-    img_1_2 = cv2.imread("img/geese.jpg")
-    img_1_2 = img_1_2.astype(np.double)
-    cv2.imshow("Original", img_1_1 / 255)
+    img_3_1 = cv2.imread("img/bird.jpg")
+    img_3_1_blurry = motion_blur_filter(img_3_1, 0.08, 0.08)
+    save_image("img_3_1_blurry", img_3_1_blurry)
 
-    cv2.imshow("Original", img_1_1/255)
-
-    # Convert images to frequency domain
-    f_1_1 = np.fft.fft2(img_1_1)
-
-    # Create motion blur filter
-    height1, width1, channels1 = f_1_1.shape
-    blur_filter1 = motion_blur_filter(height1, width1)
-    # Add third dimension for 3 channels of the filter
-    h1 = np.repeat(blur_filter1[:, :, np.newaxis], 3, axis=2)
-
-    # Add filter to image
-    g1 = f_1_1*h1
-
-    # Convert back to spatial domain
-    img_1_1_motion_blur = np.fft.ifft2(g1)
-    img_1_1_motion_blur = np.real(img_1_1_motion_blur)/255
-    cv2.imshow("Back", img_1_1_motion_blur)
-
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-    """
-
-
-    """
-    # From the lab
-    x = cv2.imread("img/bird.jpg")
-    x = x.astype(np.double)
-
-    n2, n1, c = x.shape
-
-    [k1, k2] = np.mgrid[0:n2, 0:n1]
-
-    [u, v] = np.mgrid[-n2 / 2:n2 / 2, -n1 / 2:n1 / 2]
-    u = 2 * u / n2
-    v = 2 * v / n1
-
-    F = np.fft.fft2(x)
-
-    a = 0.22
-    b = 0.22
-
-    # Blurring function.
-    H = np.sinc((u * a + v * b)) * np.exp(-1j * np.pi * (u * a + v * b))
-    H = np.repeat(H[:, :, np.newaxis], 3, axis=2)
-    G = F*H
-    # Motion Blurred Image.
-    g = np.fft.ifft2(G)
-    cv2.imshow("motion blur", np.abs(g)/255)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    """
+    img_3_1 = cv2.imread("img/bird.jpg")
+    img_3_1_blurry = motion_blur_filter(img_3_1, 0.08, 0.08)
+    save_image("img_3_1_blurry", img_3_1_blurry)
 
     # --- Exercise 3 ---------------------------------------------------------------------------------------------------
 
+    """
     # Exercise 3.1
     img_3_1 = cv2.imread("img/oranges.jpg")
     img_3_2 = cv2.imread("img/orangetree.jpg")
@@ -199,6 +159,7 @@ if __name__ == "__main__":
     plt.plot(img_3_4_freq[:, 0], img_3_4_freq[:, 1])
     plt.title("img_3_4 light size frequencies")
     plt.show()
+    """
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()
