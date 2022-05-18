@@ -26,13 +26,12 @@ def motion_blur_filter(img, a, b):
 def motion_blur_channel(c, a, b):
     height, width = c.shape
     c_fft = np.fft.fft2(c)
-    [u, v] = np.mgrid[0:height, 0:width]
+    c_fft_shift = np.fft.fftshift(c_fft)
+    [u, v] = np.mgrid[-round(height/2):round(height/2), -round(width/2):round(width/2)]
     u = 2 * u / height
     v = 2 * v / width
     h = np.sinc((u * a + v * b)) * np.exp(-1j * np.pi * (u * a + v * b))
-    # h = (np.sin(np.pi * y) / np.pi * y) * np.exp(-1j * np.pi * y)
-    # h = np.repeat(h[:, :, np.newaxis], 3, axis=2)
-    return cv2.normalize(np.abs(np.fft.ifft2(c_fft * h)), None, 0, 255, cv2.NORM_MINMAX)
+    return cv2.normalize(np.abs(np.fft.ifft2(np.fft.ifftshift(c_fft_shift * h))), None, 0, 255, cv2.NORM_MINMAX)
 
 
 def blackAndWhite(img, t1, t2, t3):
@@ -88,12 +87,14 @@ if __name__ == "__main__":
     # --- Exercise 1 ---------------------------------------------------------------------------------------------------
 
     img_3_1 = cv2.imread("img/bird.jpg")
-    img_3_1_blurry = motion_blur_filter(img_3_1, 0.08, 0.08)
+    img_3_1_blurry = motion_blur_filter(img_3_1, 15, 15)
     save_image("img_3_1_blurry", img_3_1_blurry)
 
-    img_3_1 = cv2.imread("img/bird.jpg")
-    img_3_1_blurry = motion_blur_filter(img_3_1, 0.08, 0.08)
-    save_image("img_3_1_blurry", img_3_1_blurry)
+    """
+    img_3_2 = cv2.imread("img/bird.jpg")
+    img_3_2_blurry = motion_blur_filter(img_3_1, 0.08, 0.08)
+    save_image("img_3_1_blurry", img_3_2_blurry)
+    """
 
     # --- Exercise 3 ---------------------------------------------------------------------------------------------------
 
