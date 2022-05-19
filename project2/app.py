@@ -27,7 +27,9 @@ def motion_blur_filter(img, a, b):
     c1_new = motion_blur_channel(c1, a, b).astype(np.uint8)
     c2_new = motion_blur_channel(c2, a, b).astype(np.uint8)
     c3_new = motion_blur_channel(c3, a, b).astype(np.uint8)
-    return cv2.merge((c1_new, c2_new, c3_new))
+    print(c1_new)
+    result = cv2.merge((c1_new, c2_new, c3_new))
+    return result
 
 
 def motion_blur_channel(c, a, b):
@@ -43,7 +45,8 @@ def motion_blur_channel(c, a, b):
     c_fft = np.fft.fft2(c)
     c_fft_shift = np.fft.fftshift(c_fft)
     h = get_h(height, width, a, b)
-    return cv2.normalize(np.abs(np.fft.ifft2(np.fft.ifftshift(c_fft_shift * h))), None, 0, 255, cv2.NORM_MINMAX)
+    result = np.abs(np.fft.ifft2(np.fft.ifftshift(c_fft_shift * h)))
+    return result
 
 
 def h_inverse(img, a, b):
@@ -124,7 +127,7 @@ if __name__ == "__main__":
 
     img_3_1 = cv2.imread("img/bird.jpg") / 255
     img_3_1_blurry = motion_blur_filter(img_3_1, 15, 15)
-    save_image("img_3_1_blurry", img_3_1_blurry)
+    save_image("img_3_1_blurry", img_3_1_blurry * 255)
 
     """
     img_3_2 = cv2.imread("img/bird.jpg")
