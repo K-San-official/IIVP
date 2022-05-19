@@ -15,7 +15,14 @@ def save_image(name, file):
 
 
 def motion_blur_filter(img, a, b):
-
+    """
+    For exercise 1.1
+    Adds motion blur to an image.
+    :param img:
+    :param a:
+    :param b:
+    :return:
+    """
     (c1, c2, c3) = cv2.split(img)
     c1_new = motion_blur_channel(c1, a, b).astype(np.uint8)
     c2_new = motion_blur_channel(c2, a, b).astype(np.uint8)
@@ -24,17 +31,46 @@ def motion_blur_filter(img, a, b):
 
 
 def motion_blur_channel(c, a, b):
+    """
+    For exercise 1.1.
+    Adds motion blur to a single channel of an image.
+    :param c:
+    :param a:
+    :param b:
+    :return:
+    """
     height, width = c.shape
     c_fft = np.fft.fft2(c)
     c_fft_shift = np.fft.fftshift(c_fft)
-    [u, v] = np.mgrid[-round(height/2):round(height/2), -round(width/2):round(width/2)]
-    u = 2 * u / height
-    v = 2 * v / width
-    h = np.sinc((u * a + v * b)) * np.exp(-1j * np.pi * (u * a + v * b))
+    h = get_h(height, width, a, b)
     return cv2.normalize(np.abs(np.fft.ifft2(np.fft.ifftshift(c_fft_shift * h))), None, 0, 255, cv2.NORM_MINMAX)
 
 
-def blackAndWhite(img, t1, t2, t3):
+def h_inverse(img, a, b):
+    (c1, c2, c3) = cv2.split(img)
+    c1_new = h_inverse_channel(c1, a, b)
+    c2_new = h_inverse_channel(c2, a, b)
+    c3_new = h_inverse_channel(c3, a, b)
+    return cv2.merge((c1_new, c2_new, c3_new))
+
+
+def h_inverse_channel(c, a, b):
+    height, width = c.shape
+    c_fft = np.fft.fft2(c)
+    c_fft_shift = np.fft.fftshift(c_fft)
+    h = get_h(height, width, a, b)
+    return np.abs(np.fft.ifft2(np.fft.ifftshift(c_fft_shift / h)))
+
+
+def get_h(height, width, a, b):
+    [u, v] = np.mgrid[-round(height / 2):round(height / 2), -round(width / 2):round(width / 2)]
+    u = 2 * u / height
+    v = 2 * v / width
+    h = np.sinc((u * a + v * b)) * np.exp(-1j * np.pi * (u * a + v * b))
+    return h
+
+
+def black_and_white(img, t1, t2, t3):
     """
     Converts a BGR image to a black-and-white image
     :param img:
@@ -86,7 +122,7 @@ def granulometry(img, k_s_start, factor, iterations):
 if __name__ == "__main__":
     # --- Exercise 1 ---------------------------------------------------------------------------------------------------
 
-    img_3_1 = cv2.imread("img/bird.jpg")
+    img_3_1 = cv2.imread("img/bird.jpg") / 255
     img_3_1_blurry = motion_blur_filter(img_3_1, 15, 15)
     save_image("img_3_1_blurry", img_3_1_blurry)
 
