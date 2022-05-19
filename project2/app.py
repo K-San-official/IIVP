@@ -3,6 +3,7 @@ import math
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+from skimage.util import random_noise
 
 """
 Methods: In this section, all relevant methods are stored.
@@ -24,10 +25,9 @@ def motion_blur_filter(img, a, b):
     :return:
     """
     (c1, c2, c3) = cv2.split(img)
-    c1_new = motion_blur_channel(c1, a, b).astype(np.uint8)
-    c2_new = motion_blur_channel(c2, a, b).astype(np.uint8)
-    c3_new = motion_blur_channel(c3, a, b).astype(np.uint8)
-    print(c1_new)
+    c1_new = motion_blur_channel(c1, a, b)
+    c2_new = motion_blur_channel(c2, a, b)
+    c3_new = motion_blur_channel(c3, a, b)
     result = cv2.merge((c1_new, c2_new, c3_new))
     return result
 
@@ -93,6 +93,7 @@ def black_and_white(img, t1, t2, t3):
     bw = np.maximum(bw, bw3)
     return bw
 
+
 def granulometry(img, k_s_start, factor, iterations):
     """
     Calculates frequencies (sizes) of round objects in images
@@ -117,7 +118,7 @@ def granulometry(img, k_s_start, factor, iterations):
         result_matrix[i, 0] = radius
         result_matrix[i, 1] = abs(sa - new_sa)
         sa = new_sa
-    return (opening, result_matrix)
+    return opening, result_matrix
 
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -128,6 +129,13 @@ if __name__ == "__main__":
     img_3_1 = cv2.imread("img/bird.jpg") / 255
     img_3_1_blurry = motion_blur_filter(img_3_1, 15, 15)
     save_image("img_3_1_blurry", img_3_1_blurry * 255)
+
+    img_3_1_blurry_noisy = random_noise(img_3_1_blurry, 'gaussian', mean=0, var=0.002)
+    save_image("img_3_1_blurry_noisy", img_3_1_blurry_noisy)
+
+    inverse = h_inverse(img_3_1_blurry, 0.99, 0.99)
+    print(inverse)
+    save_image("inverse_test", inverse * 255)
 
     """
     img_3_2 = cv2.imread("img/bird.jpg")
