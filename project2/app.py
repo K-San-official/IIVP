@@ -43,13 +43,19 @@ def motion_blur_channel(c, a, b):
     """
     height, width = c.shape
     c_fft = np.fft.fft2(c)
-    c_fft_shift = np.fft.fftshift(c_fft)
     h = get_h(height, width, a, b)
-    result = np.abs(np.fft.ifft2(np.fft.ifftshift(c_fft_shift * h)))
+    result = np.abs(np.fft.ifft2(c_fft * h))
     return result
 
 
 def h_inverse(img, a, b):
+    """
+    For exercise 1.2.
+    :param img:
+    :param a:
+    :param b:
+    :return:
+    """
     (c1, c2, c3) = cv2.split(img)
     c1_new = h_inverse_channel(c1, a, b)
     c2_new = h_inverse_channel(c2, a, b)
@@ -60,9 +66,8 @@ def h_inverse(img, a, b):
 def h_inverse_channel(c, a, b):
     height, width = c.shape
     c_fft = np.fft.fft2(c)
-    c_fft_shift = np.fft.fftshift(c_fft)
     h = get_h(height, width, a, b)
-    return np.abs(np.fft.ifft2(np.fft.ifftshift(c_fft_shift / h)))
+    return np.abs(np.fft.ifft2(c_fft / h))
 
 
 def get_h(height, width, a, b):
@@ -125,23 +130,30 @@ def granulometry(img, k_s_start, factor, iterations):
 
 if __name__ == "__main__":
     # --- Exercise 1 ---------------------------------------------------------------------------------------------------
+    factor = 0.08  # alpha and beta value
 
     img_3_1 = cv2.imread("img/bird.jpg") / 255
-    img_3_1_blurry = motion_blur_filter(img_3_1, 15, 15)
+    img_3_2 = cv2.imread("img/bird.jpg")
+
+    # --- Exercise 1.1 -------------------------------------------------------------------------------------------------
+
+    img_3_1_blurry = motion_blur_filter(img_3_1, factor, factor)
     save_image("img_3_1_blurry", img_3_1_blurry * 255)
 
     img_3_1_blurry_noisy = random_noise(img_3_1_blurry, 'gaussian', mean=0, var=0.002)
     save_image("img_3_1_blurry_noisy", img_3_1_blurry_noisy)
 
-    inverse = h_inverse(img_3_1_blurry, 0.99, 0.99)
+    # --- Exercise 1.2 -------------------------------------------------------------------------------------------------
+
+    inverse = h_inverse(img_3_1_blurry, factor, factor)
     print(inverse)
     save_image("inverse_test", inverse * 255)
 
-    """
-    img_3_2 = cv2.imread("img/bird.jpg")
+
+
     img_3_2_blurry = motion_blur_filter(img_3_1, 0.08, 0.08)
     save_image("img_3_1_blurry", img_3_2_blurry)
-    """
+
 
     # --- Exercise 3 ---------------------------------------------------------------------------------------------------
 
