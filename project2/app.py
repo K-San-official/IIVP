@@ -132,27 +132,42 @@ if __name__ == "__main__":
     # --- Exercise 1 ---------------------------------------------------------------------------------------------------
     factor = 0.08  # alpha and beta value
 
-    img_3_1 = cv2.imread("img/bird.jpg") / 255
-    img_3_2 = cv2.imread("img/bird.jpg")
+    img_1_1 = cv2.imread("img/bird.jpg") / 255
+    img_1_2 = cv2.imread("img/geese.jpg") / 255
 
-    # --- Exercise 1.1 -------------------------------------------------------------------------------------------------
+    # --- Exercise 1.1 (Adding blur) -----------------------------------------------------------------------------------
 
-    img_3_1_blurry = motion_blur_filter(img_3_1, factor, factor)
-    save_image("img_3_1_blurry", img_3_1_blurry * 255)
+    # Just motion blur
+    img_1_1_blurry = motion_blur_filter(img_1_1, factor, factor)
+    save_image("img_1_1_blurry", img_1_1_blurry * 255)
 
-    img_3_1_blurry_noisy = random_noise(img_3_1_blurry, 'gaussian', mean=0, var=0.002)
-    save_image("img_3_1_blurry_noisy", img_3_1_blurry_noisy)
+    img_1_2_blurry = motion_blur_filter(img_1_2, factor, factor)
+    save_image("img_1_2_blurry", img_1_2_blurry * 255)
 
-    # --- Exercise 1.2 -------------------------------------------------------------------------------------------------
+    # Motion blur and noise
+    img_1_1_blurry_noisy = random_noise(img_1_1_blurry, 'gaussian', mean=0, var=0.002)
+    save_image("img_1_1_blurry_noisy", img_1_1_blurry_noisy * 255)
 
-    inverse = h_inverse(img_3_1_blurry, factor, factor)
-    print(inverse)
-    save_image("inverse_test", inverse * 255)
+    img_1_2_blurry_noisy = random_noise(img_1_2_blurry, 'gaussian', mean=0, var=0.002)
+    save_image("img_1_2_blurry_noisy", img_1_2_blurry_noisy * 255)
 
+    # --- Exercise 1.2 (Removing blur) ---------------------------------------------------------------------------------
 
+    # Inverse filter directly after motion blur (1)
+    inverse_1_directly = h_inverse(img_1_1_blurry, factor, factor)
+    save_image("img_1_1_inverse_directly", inverse_1_directly * 255)
 
-    img_3_2_blurry = motion_blur_filter(img_3_1, 0.08, 0.08)
-    save_image("img_3_1_blurry", img_3_2_blurry)
+    inverse_2_directly = h_inverse(img_1_2_blurry, factor, factor)
+    save_image("img_1_2_inverse_directly", inverse_2_directly * 255)
+
+    # Inverse filter after motion blur and added noise (2)
+    inverse_1_after = h_inverse(img_1_1_blurry_noisy, factor, factor)
+    save_image("img_1_1_inverse_after", inverse_1_after * 255)
+
+    inverse_2_after = h_inverse(img_1_2_blurry_noisy, factor, factor)
+    save_image("img_1_2_inverse_after", inverse_2_after * 255)
+
+    # Only additive noise added (3)
 
 
     # --- Exercise 3 ---------------------------------------------------------------------------------------------------
