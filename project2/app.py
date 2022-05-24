@@ -202,12 +202,15 @@ def granulometry(img, k_s_start, factor, iterations):
 
 if __name__ == "__main__":
     # --- Exercise 1 ---------------------------------------------------------------------------------------------------
+    print("Computing exercise 1")
+
     factor = 0.08  # alpha and beta value
 
     img_1_1 = cv2.imread("img/bird.jpg") / 255
     img_1_2 = cv2.imread("img/geese.jpg") / 255
 
     # --- Exercise 1.1 (Adding blur) -----------------------------------------------------------------------------------
+    print("Computing exercise 1.1")
 
     # Just motion blur
     img_1_1_blurry = motion_blur_filter(img_1_1, factor, factor)
@@ -224,6 +227,7 @@ if __name__ == "__main__":
     save_image("img_1_2_blurry_noisy", img_1_2_blurry_noisy * 255)
 
     # --- Exercise 1.2 (Removing blur) ---------------------------------------------------------------------------------
+    print("Computing exercise 1.2")
 
     # Inverse filter directly after motion blur (1)
     inverse_1_directly = h_inverse(img_1_1_blurry, factor, factor)
@@ -251,30 +255,30 @@ if __name__ == "__main__":
     img_1_1_blurry = motion_blur_filter(img_1_1, factor, factor)
     img_1_1_blurry_noisy = random_noise(img_1_1_blurry, "gaussian", mean=0, var=0.002)  # remove later
 
-    img_1_1_wiener_after = wiener_filter(img_1_1, img_1_1_blurry_noisy, True, True, factor, factor)
+    img_1_1_wiener_after = wiener_filter(img_1_1, img_1_1_blurry_noisy, True, True, 0.8, 0.8)
     save_image("img_1_1_wiener_after", img_1_1_wiener_after)
 
-
     # --- Exercise 3 ---------------------------------------------------------------------------------------------------
+    print("Computing exercise 3")
 
-
-    # Exercise 3.1
     img_3_1 = cv2.imread("img/oranges.jpg")
     img_3_2 = cv2.imread("img/orangetree.jpg")
 
+    # Exercise 3.1
+    print("Computing exercise 3.1")
+
     # Pre-processing (black and white)
     img_3_1_bw = black_and_white(img_3_1, 100, 100, 100)
-    #cv2.imshow("BW1", img_3_1_bw/255)
-
     img_3_2_bw = black_and_white(img_3_2, 255, 255, 200)
-    #cv2.imshow("BW2", img_3_2_bw / 255)
-    #save_image("img_3_2_bw", img_3_2_bw)
+
+    save_image("img_3_1_bw", img_3_1_bw)
+    save_image("img_3_2_bw", img_3_2_bw)
+
     # Since a few leaves are still marked as white, we need a close operation (Dilation followed by Erosion)
     erode_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 15))
     dilate_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (50, 50))
     img_3_2_bw_closing = cv2.morphologyEx(img_3_2_bw, cv2.MORPH_ERODE, erode_kernel)
     img_3_2_bw_closing = cv2.morphologyEx(img_3_2_bw_closing, cv2.MORPH_DILATE, dilate_kernel)
-    #cv2.imshow("Closing", img_3_2_bw_closing)
     save_image("img_3_2_closing", img_3_2_bw_closing)
 
     # Count oranges
@@ -290,6 +294,7 @@ if __name__ == "__main__":
     print("Image 2 oranges count:", len(count2))
 
     # Exercise 3.2
+    print("Computing exercise 3.2")
     img_3_3 = cv2.imread("img/lights.jpg")
     img_3_4 = cv2.imread("img/jar.jpg")
 
@@ -319,7 +324,3 @@ if __name__ == "__main__":
     plt.plot(img_3_4_freq[:, 0], img_3_4_freq[:, 1])
     plt.title("img_3_4 light size frequencies")
     plt.show()
-
-
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
