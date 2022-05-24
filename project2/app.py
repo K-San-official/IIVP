@@ -11,6 +11,13 @@ Methods: In this section, all relevant methods are stored.
 
 
 def save_image(name, file):
+    """
+    Saves an image to the designated output folder.
+    Small method but makes life a bit easier :).
+    :param name:
+    :param file:
+    :return:
+    """
     path = "output/" + name + ".jpg"
     cv2.imwrite(path, file)
 
@@ -64,6 +71,13 @@ def h_inverse(img, a, b):
 
 
 def h_inverse_channel(c, a, b):
+    """
+    For exercise 1.2
+    :param c:
+    :param a:
+    :param b:
+    :return:
+    """
     height, width = c.shape
     c_fft = np.fft.fft2(c)
     h = get_h(height, width, a, b)
@@ -127,18 +141,11 @@ def wiener_filter_channel(o_c, n_c, k_ratio, motion_blur, alpha, beta):
         k = np.sum(noise_power_spectrum) / np.sum(img_power_spectrum)
     height, width = o_c.shape
     if motion_blur:
-        h = get_h(height, width, alpha, beta)  # h(u,v) is deterministic, so we can re-create the degradation function here!
+        h = get_h(height, width, alpha, beta)  # h(u,v) is deterministic, so we can re-create the degradation function
     else:
         h = get_h(height, width, 0, 0)
     h_squared = h * np.conj(h)
     h_w = (1 / h) * (h_squared / (h_squared + (noise_power_spectrum / img_power_spectrum)))
-    """
-    y = o_c + n_c
-    fft_y = np.fft.fftshift(np.fft.fft2(y))
-    fraction = (noise_power_spectrum / img_power_spectrum) * k
-    img_back_fft = fft_y / (1 + fraction)
-    img_back = np.fft.ifft2(img_back_fft)
-    """
     img_back_fft = h_w * img_fft
     img_back = np.fft.ifft2(img_back_fft)
     return np.abs(img_back)
@@ -193,14 +200,13 @@ def granulometry(img, k_s_start, factor, iterations):
 
 # ----------------------------------------------------------------------------------------------------------------------
 
-
 if __name__ == "__main__":
     # --- Exercise 1 ---------------------------------------------------------------------------------------------------
     factor = 0.08  # alpha and beta value
 
     img_1_1 = cv2.imread("img/bird.jpg") / 255
     img_1_2 = cv2.imread("img/geese.jpg") / 255
-    """
+
     # --- Exercise 1.1 (Adding blur) -----------------------------------------------------------------------------------
 
     # Just motion blur
@@ -233,7 +239,6 @@ if __name__ == "__main__":
     inverse_2_after = h_inverse(img_1_2_blurry_noisy, factor, factor)
     save_image("img_1_2_inverse_after", inverse_2_after * 255)
 
-    """
     # Only additive noise added (3)
     img_1_1_noisy = random_noise(img_1_1, "gaussian", mean=0, var=0.002)
     img_1_2_noisy = random_noise(img_1_2, "gaussian", mean=0, var=0.002)
