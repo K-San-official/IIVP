@@ -86,29 +86,35 @@ def get_h(height, width, a, b):
     return h
 
 
-def wiener_filter(original, noisy, k_ratio=False):
+def wiener_filter(original, noisy, k_ratio=False, motion_blur=False, alpha=0, beta=0):
     """
     Function for exercise 1.4
     Calculates the result of a wiener filter.
     :param original: original image
     :param noisy: noisy image
     :param k_ratio: Flag to determine if a special ratio should be used
+    :param motion_blur:
+    :param alpha:
+    :param beta:
     :return: de-noised image (3-channel)
     """
     (c1, c2, c3) = cv2.split(original)
     (n1, n2, n3) = cv2.split(noisy)
-    c1_new = wiener_filter_channel(c1, n1, k_ratio)
-    c2_new = wiener_filter_channel(c2, n2, k_ratio)
-    c3_new = wiener_filter_channel(c3, n3, k_ratio)
-    return cv2.merge((c1_new, c2_new, c3_new))
+    c1_new = wiener_filter_channel(c1, n1, k_ratio, motion_blur, alpha, beta)
+    c2_new = wiener_filter_channel(c2, n2, k_ratio, motion_blur, alpha, beta)
+    c3_new = wiener_filter_channel(c3, n3, k_ratio, motion_blur, alpha, beta)
+    return cv2.normalize(cv2.merge((c1_new, c2_new, c3_new)), None, 0, 255, cv2.NORM_MINMAX)
 
 
-def wiener_filter_channel(o_c, n_c, k_ratio):
+def wiener_filter_channel(o_c, n_c, k_ratio, motion_blur, alpha, beta):
     """
     Calculates the result of a wiener filter (per channel).
     :param o_c: channel of the original image
     :param n_c: channel of the noisy image
     :param k_ratio: Flag to determine if a special ratio should be used
+    :param motion_blur:
+    :param alpha:
+    :param beta:
     :return: de-noised image (1-channel)
     """
     img_fft = np.fft.fftshift(np.fft.fft2(o_c))
@@ -119,10 +125,21 @@ def wiener_filter_channel(o_c, n_c, k_ratio):
     if k_ratio:
         # Calculate k based on the noise/original power spectrum ratio
         k = np.sum(noise_power_spectrum) / np.sum(img_power_spectrum)
+    height, width = o_c.shape
+    if motion_blur:
+        h = get_h(height, width, alpha, beta)  # h(u,v) is deterministic, so we can re-create the degradation function here!
+    else:
+        h = get_h(height, width, 0, 0)
+    h_squared = h * np.conj(h)
+    h_w = (1 / h) * (h_squared / (h_squared + (noise_power_spectrum / img_power_spectrum)))
+    """
     y = o_c + n_c
     fft_y = np.fft.fftshift(np.fft.fft2(y))
     fraction = (noise_power_spectrum / img_power_spectrum) * k
     img_back_fft = fft_y / (1 + fraction)
+    img_back = np.fft.ifft2(img_back_fft)
+    """
+    img_back_fft = h_w * img_fft
     img_back = np.fft.ifft2(img_back_fft)
     return np.abs(img_back)
 
@@ -223,28 +240,28 @@ if __name__ == "__main__":
 
     # Wiener filter with additive noise only (3)
     img_1_1_wiener_directly = wiener_filter(img_1_1, img_1_1_noisy)
-    save_image("img_1_1_wiener_directly", img_1_1_wiener_directly * 255)
+    save_image("img_1_1_wiener_directly", img_1_1_wiener_directly)
 
     # Wiener filter with noise and motion blur (4)
     img_1_1_blurry = motion_blur_filter(img_1_1, factor, factor)
     img_1_1_blurry_noisy = random_noise(img_1_1_blurry, "gaussian", mean=0, var=0.002)  # remove later
 
-    img_1_1_wiener_after = wiener_filter(img_1_1, img_1_1_blurry_noisy, True)
-    save_image("img_1_1_wiener_after", img_1_1_wiener_after * 255)
+    img_1_1_wiener_after = wiener_filter(img_1_1, img_1_1_blurry_noisy, True, True, factor, factor)
+    save_image("img_1_1_wiener_after", img_1_1_wiener_after)
 
 
     # --- Exercise 3 ---------------------------------------------------------------------------------------------------
 
-    """
+
     # Exercise 3.1
     img_3_1 = cv2.imread("img/oranges.jpg")
     img_3_2 = cv2.imread("img/orangetree.jpg")
 
     # Pre-processing (black and white)
-    img_3_1_bw = blackAndWhite(img_3_1, 100, 100, 100)
+    img_3_1_bw = black_and_white(img_3_1, 100, 100, 100)
     #cv2.imshow("BW1", img_3_1_bw/255)
 
-    img_3_2_bw = blackAndWhite(img_3_2, 255, 255, 200)
+    img_3_2_bw = black_and_white(img_3_2, 255, 255, 200)
     #cv2.imshow("BW2", img_3_2_bw / 255)
     #save_image("img_3_2_bw", img_3_2_bw)
     # Since a few leaves are still marked as white, we need a close operation (Dilation followed by Erosion)
@@ -297,7 +314,7 @@ if __name__ == "__main__":
     plt.plot(img_3_4_freq[:, 0], img_3_4_freq[:, 1])
     plt.title("img_3_4 light size frequencies")
     plt.show()
-    """
+
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()
