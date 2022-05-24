@@ -71,11 +71,60 @@ def h_inverse_channel(c, a, b):
 
 
 def get_h(height, width, a, b):
+    """
+    Produces an motion blur filter mask in the frequency domain.
+    :param height:
+    :param width:
+    :param a:
+    :param b:
+    :return:
+    """
     [u, v] = np.mgrid[-round(height / 2):round(height / 2), -round(width / 2):round(width / 2)]
     u = 2 * u / height
     v = 2 * v / width
     h = np.sinc((u * a + v * b)) * np.exp(-1j * np.pi * (u * a + v * b))
     return h
+
+
+def wiener_filter(original, noisy, k_ratio=False):
+    """
+    Function for exercise 1.4
+    Calculates the result of a wiener filter.
+    :param original: original image
+    :param noisy: noisy image
+    :param k_ratio: Flag to determine if a special ratio should be used
+    :return: de-noised image (3-channel)
+    """
+    (c1, c2, c3) = cv2.split(original)
+    (n1, n2, n3) = cv2.split(noisy)
+    c1_new = wiener_filter_channel(c1, n1, k_ratio)
+    c2_new = wiener_filter_channel(c2, n2, k_ratio)
+    c3_new = wiener_filter_channel(c3, n3, k_ratio)
+    return cv2.merge((c1_new, c2_new, c3_new))
+
+
+def wiener_filter_channel(o_c, n_c, k_ratio):
+    """
+    Calculates the result of a wiener filter (per channel).
+    :param o_c: channel of the original image
+    :param n_c: channel of the noisy image
+    :param k_ratio: Flag to determine if a special ratio should be used
+    :return: de-noised image (1-channel)
+    """
+    img_fft = np.fft.fftshift(np.fft.fft2(o_c))
+    img_power_spectrum = np.abs(img_fft) ** 2
+    noise_fft = np.fft.fftshift(np.fft.fft2(n_c))
+    noise_power_spectrum = np.abs(noise_fft) ** 2
+    k = 1  # Default value for k if no other ratio is specified
+    if k_ratio:
+        # Calculate k based on the noise/original power spectrum ratio
+        k = np.sum(noise_power_spectrum) / np.sum(img_power_spectrum)
+    y = o_c + n_c
+    fft_y = np.fft.fftshift(np.fft.fft2(y))
+    fraction = (noise_power_spectrum / img_power_spectrum) * k
+    img_back_fft = fft_y / (1 + fraction)
+    img_back = np.fft.ifft2(img_back_fft)
+    return np.abs(img_back)
 
 
 def black_and_white(img, t1, t2, t3):
@@ -134,7 +183,7 @@ if __name__ == "__main__":
 
     img_1_1 = cv2.imread("img/bird.jpg") / 255
     img_1_2 = cv2.imread("img/geese.jpg") / 255
-
+    """
     # --- Exercise 1.1 (Adding blur) -----------------------------------------------------------------------------------
 
     # Just motion blur
@@ -145,10 +194,10 @@ if __name__ == "__main__":
     save_image("img_1_2_blurry", img_1_2_blurry * 255)
 
     # Motion blur and noise
-    img_1_1_blurry_noisy = random_noise(img_1_1_blurry, 'gaussian', mean=0, var=0.002)
+    img_1_1_blurry_noisy = random_noise(img_1_1_blurry, "gaussian", mean=0, var=0.002)
     save_image("img_1_1_blurry_noisy", img_1_1_blurry_noisy * 255)
 
-    img_1_2_blurry_noisy = random_noise(img_1_2_blurry, 'gaussian', mean=0, var=0.002)
+    img_1_2_blurry_noisy = random_noise(img_1_2_blurry, "gaussian", mean=0, var=0.002)
     save_image("img_1_2_blurry_noisy", img_1_2_blurry_noisy * 255)
 
     # --- Exercise 1.2 (Removing blur) ---------------------------------------------------------------------------------
@@ -167,7 +216,21 @@ if __name__ == "__main__":
     inverse_2_after = h_inverse(img_1_2_blurry_noisy, factor, factor)
     save_image("img_1_2_inverse_after", inverse_2_after * 255)
 
+    """
     # Only additive noise added (3)
+    img_1_1_noisy = random_noise(img_1_1, "gaussian", mean=0, var=0.002)
+    img_1_2_noisy = random_noise(img_1_2, "gaussian", mean=0, var=0.002)
+
+    # Wiener filter with additive noise only (3)
+    img_1_1_wiener_directly = wiener_filter(img_1_1, img_1_1_noisy)
+    save_image("img_1_1_wiener_directly", img_1_1_wiener_directly * 255)
+
+    # Wiener filter with noise and motion blur (4)
+    img_1_1_blurry = motion_blur_filter(img_1_1, factor, factor)
+    img_1_1_blurry_noisy = random_noise(img_1_1_blurry, "gaussian", mean=0, var=0.002)  # remove later
+
+    img_1_1_wiener_after = wiener_filter(img_1_1, img_1_1_blurry_noisy, True)
+    save_image("img_1_1_wiener_after", img_1_1_wiener_after * 255)
 
 
     # --- Exercise 3 ---------------------------------------------------------------------------------------------------
