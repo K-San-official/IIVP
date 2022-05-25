@@ -3,7 +3,10 @@ import math
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy
 from skimage.util import random_noise
+from numpy import pi
+from numpy import r_
 
 """
 Methods: In this section, all relevant methods are stored.
@@ -151,6 +154,27 @@ def wiener_filter_channel(o_c, n_c, k_ratio, motion_blur, alpha, beta):
     return np.abs(img_back)
 
 
+def dct_block(img, size=8):
+    """
+    Reference: Lab 6 code
+    :param img:
+    :param size:
+    :return:
+    """
+    img_size = img.shape
+    dct = np.zeros(img_size)
+    for i in r_[:img_size[0]:8]:
+        for j in r_[:img_size[1]:8]:
+            dct[i:i + 8, j:j + 8] = dct2(img[i:i + 8, j:j + 8])
+
+def dct2(a):
+    return scipy.fftpack.dct(scipy.fftpack.dct(a.T, norm='ortho').T, norm='ortho' )
+
+
+def idct2(a):
+    return scipy.fftpack.idct(scipy.fftpack.idct(a.T, norm='ortho').T, norm='ortho')
+
+
 def black_and_white(img, t1, t2, t3):
     """
     Converts a BGR image to a black-and-white image
@@ -201,126 +225,140 @@ def granulometry(img, k_s_start, factor, iterations):
 # ----------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    # --- Exercise 1 ---------------------------------------------------------------------------------------------------
-    print("Computing exercise 1")
+    # # --- Exercise 1 ---------------------------------------------------------------------------------------------------
+    # print("Computing exercise 1")
+    #
+    # factor = 0.08  # alpha and beta value
+    #
+    # img_1_1 = cv2.imread("img/bird.jpg") / 255
+    # img_1_2 = cv2.imread("img/geese.jpg") / 255
+    #
+    # # --- Exercise 1.1 (Adding blur) -----------------------------------------------------------------------------------
+    # print("Computing exercise 1.1")
+    #
+    # # Just motion blur
+    # img_1_1_blurry = motion_blur_filter(img_1_1, factor, factor)
+    # save_image("img_1_1_blurry", img_1_1_blurry * 255)
+    #
+    # img_1_2_blurry = motion_blur_filter(img_1_2, factor, factor)
+    # save_image("img_1_2_blurry", img_1_2_blurry * 255)
+    #
+    # # Motion blur and noise
+    # img_1_1_blurry_noisy = random_noise(img_1_1_blurry, "gaussian", mean=0, var=0.002)
+    # save_image("img_1_1_blurry_noisy", img_1_1_blurry_noisy * 255)
+    #
+    # img_1_2_blurry_noisy = random_noise(img_1_2_blurry, "gaussian", mean=0, var=0.002)
+    # save_image("img_1_2_blurry_noisy", img_1_2_blurry_noisy * 255)
+    #
+    # # --- Exercise 1.2 (Removing blur) ---------------------------------------------------------------------------------
+    # print("Computing exercise 1.2")
+    #
+    # # Inverse filter directly after motion blur (1)
+    # inverse_1_directly = h_inverse(img_1_1_blurry, factor, factor)
+    # save_image("img_1_1_inverse_directly", inverse_1_directly * 255)
+    #
+    # inverse_2_directly = h_inverse(img_1_2_blurry, factor, factor)
+    # save_image("img_1_2_inverse_directly", inverse_2_directly * 255)
+    #
+    # # Inverse filter after motion blur and added noise (2)
+    # inverse_1_after = h_inverse(img_1_1_blurry_noisy, factor, factor)
+    # save_image("img_1_1_inverse_after", inverse_1_after * 255)
+    #
+    # inverse_2_after = h_inverse(img_1_2_blurry_noisy, factor, factor)
+    # save_image("img_1_2_inverse_after", inverse_2_after * 255)
+    #
+    # # Only additive noise added (3)
+    # img_1_1_noisy = random_noise(img_1_1, "gaussian", mean=0, var=0.002)
+    # img_1_2_noisy = random_noise(img_1_2, "gaussian", mean=0, var=0.002)
+    #
+    # # Wiener filter with additive noise only (3)
+    # img_1_1_wiener_directly = wiener_filter(img_1_1, img_1_1_noisy)
+    # save_image("img_1_1_wiener_directly", img_1_1_wiener_directly)
+    #
+    # # Wiener filter with noise and motion blur (4)
+    # img_1_1_blurry = motion_blur_filter(img_1_1, factor, factor)
+    # img_1_1_blurry_noisy = random_noise(img_1_1_blurry, "gaussian", mean=0, var=0.002)  # remove later
+    #
+    # img_1_1_wiener_after = wiener_filter(img_1_1, img_1_1_blurry_noisy, True, True, 0.8, 0.8)
+    # save_image("img_1_1_wiener_after", img_1_1_wiener_after)
 
-    factor = 0.08  # alpha and beta value
+    # --- Exercise 2 ---------------------------------------------------------------------------------------------------
+    print("Computing exercise 2")
+    img_2 = cv2.imread("img/img_2.jpg")
+    img_2_gr = cv2.cvtColor(img_2, cv2.COLOR_BGR2GRAY)/255
+    save_image("img_2_gr", img_2_gr*255)
 
-    img_1_1 = cv2.imread("img/bird.jpg") / 255
-    img_1_2 = cv2.imread("img/geese.jpg") / 255
+    # Watermark insertion
+    pos = 400
+    img_2_dct = cv2.dct(img_2_gr)
+    save_image("img_2_dct", img_2_dct)
+    cv2.imshow("test", cv2.resize(img_2_dct[pos:pos + 8, pos:pos + 8], (400, 400), interpolation=cv2.INTER_NEAREST))
 
-    # --- Exercise 1.1 (Adding blur) -----------------------------------------------------------------------------------
-    print("Computing exercise 1.1")
+    cv2.waitKey()
 
-    # Just motion blur
-    img_1_1_blurry = motion_blur_filter(img_1_1, factor, factor)
-    save_image("img_1_1_blurry", img_1_1_blurry * 255)
-
-    img_1_2_blurry = motion_blur_filter(img_1_2, factor, factor)
-    save_image("img_1_2_blurry", img_1_2_blurry * 255)
-
-    # Motion blur and noise
-    img_1_1_blurry_noisy = random_noise(img_1_1_blurry, "gaussian", mean=0, var=0.002)
-    save_image("img_1_1_blurry_noisy", img_1_1_blurry_noisy * 255)
-
-    img_1_2_blurry_noisy = random_noise(img_1_2_blurry, "gaussian", mean=0, var=0.002)
-    save_image("img_1_2_blurry_noisy", img_1_2_blurry_noisy * 255)
-
-    # --- Exercise 1.2 (Removing blur) ---------------------------------------------------------------------------------
-    print("Computing exercise 1.2")
-
-    # Inverse filter directly after motion blur (1)
-    inverse_1_directly = h_inverse(img_1_1_blurry, factor, factor)
-    save_image("img_1_1_inverse_directly", inverse_1_directly * 255)
-
-    inverse_2_directly = h_inverse(img_1_2_blurry, factor, factor)
-    save_image("img_1_2_inverse_directly", inverse_2_directly * 255)
-
-    # Inverse filter after motion blur and added noise (2)
-    inverse_1_after = h_inverse(img_1_1_blurry_noisy, factor, factor)
-    save_image("img_1_1_inverse_after", inverse_1_after * 255)
-
-    inverse_2_after = h_inverse(img_1_2_blurry_noisy, factor, factor)
-    save_image("img_1_2_inverse_after", inverse_2_after * 255)
-
-    # Only additive noise added (3)
-    img_1_1_noisy = random_noise(img_1_1, "gaussian", mean=0, var=0.002)
-    img_1_2_noisy = random_noise(img_1_2, "gaussian", mean=0, var=0.002)
-
-    # Wiener filter with additive noise only (3)
-    img_1_1_wiener_directly = wiener_filter(img_1_1, img_1_1_noisy)
-    save_image("img_1_1_wiener_directly", img_1_1_wiener_directly)
-
-    # Wiener filter with noise and motion blur (4)
-    img_1_1_blurry = motion_blur_filter(img_1_1, factor, factor)
-    img_1_1_blurry_noisy = random_noise(img_1_1_blurry, "gaussian", mean=0, var=0.002)  # remove later
-
-    img_1_1_wiener_after = wiener_filter(img_1_1, img_1_1_blurry_noisy, True, True, 0.8, 0.8)
-    save_image("img_1_1_wiener_after", img_1_1_wiener_after)
-
-    # --- Exercise 3 ---------------------------------------------------------------------------------------------------
-    print("Computing exercise 3")
-
-    img_3_1 = cv2.imread("img/oranges.jpg")
-    img_3_2 = cv2.imread("img/orangetree.jpg")
-
-    # Exercise 3.1
-    print("Computing exercise 3.1")
-
-    # Pre-processing (black and white)
-    img_3_1_bw = black_and_white(img_3_1, 100, 100, 100)
-    img_3_2_bw = black_and_white(img_3_2, 255, 255, 200)
-
-    save_image("img_3_1_bw", img_3_1_bw)
-    save_image("img_3_2_bw", img_3_2_bw)
-
-    # Since a few leaves are still marked as white, we need a close operation (Dilation followed by Erosion)
-    erode_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 15))
-    dilate_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (50, 50))
-    img_3_2_bw_closing = cv2.morphologyEx(img_3_2_bw, cv2.MORPH_ERODE, erode_kernel)
-    img_3_2_bw_closing = cv2.morphologyEx(img_3_2_bw_closing, cv2.MORPH_DILATE, dilate_kernel)
-    save_image("img_3_2_closing", img_3_2_bw_closing)
-
-    # Count oranges
-
-    # Image 1
-    (count1, hierarchy1) = cv2.findContours(
-        img_3_1_bw, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-    print("Image 1 oranges count:", len(count1))
-
-    # Image 2 (after closing operation)
-    (count2, hierarchy2) = cv2.findContours(
-        img_3_2_bw_closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-    print("Image 2 oranges count:", len(count2))
-
-    # Exercise 3.2
-    print("Computing exercise 3.2")
-    img_3_3 = cv2.imread("img/lights.jpg")
-    img_3_4 = cv2.imread("img/jar.jpg")
-
-    # Convert to greyscale and scale down (otherwise the calculation takes far too long!)
-    img_3_3_grey = cv2.cvtColor(img_3_3, cv2.COLOR_BGR2GRAY)
-    width = int(img_3_3_grey.shape[1] / 10)
-    height = int(img_3_3_grey.shape[0] / 10)
-    img_3_3_grey = cv2.resize(img_3_3_grey, (width, height))
-    save_image("img_3_3_grey", img_3_3_grey)
-
-    img_3_4_grey = cv2.cvtColor(img_3_4, cv2.COLOR_BGR2GRAY)
-    width = int(img_3_4_grey.shape[1] / 10)
-    height = int(img_3_4_grey.shape[0] / 10)
-    img_3_4_grey = cv2.resize(img_3_4_grey, (width, height))
-    save_image("img_3_4_grey", img_3_4_grey)
-
-    # Do the granulometry magic (closing operations)
-    (img_3_3_high_contr, img_3_3_freq) = granulometry(img_3_3_grey, 3, 5, 20)
-    save_image("img_3_3_high_contr", img_3_3_high_contr)
-    print(img_3_3_freq)
-    plt.plot(img_3_3_freq[:, 0], img_3_3_freq[:, 1])
-    plt.title("img_3_3 light size frequencies")
-    plt.show()
-
-    (img_3_4_high_contr, img_3_4_freq) = granulometry(img_3_4_grey, 3, 2, 18)
-    save_image("img_3_4_high_contr", img_3_4_high_contr)
-    plt.plot(img_3_4_freq[:, 0], img_3_4_freq[:, 1])
-    plt.title("img_3_4 light size frequencies")
-    plt.show()
+    # # --- Exercise 3 ---------------------------------------------------------------------------------------------------
+    # print("Computing exercise 3")
+    #
+    # img_3_1 = cv2.imread("img/oranges.jpg")
+    # img_3_2 = cv2.imread("img/orangetree.jpg")
+    #
+    # # Exercise 3.1
+    # print("Computing exercise 3.1")
+    #
+    # # Pre-processing (black and white)
+    # img_3_1_bw = black_and_white(img_3_1, 100, 100, 100)
+    # img_3_2_bw = black_and_white(img_3_2, 255, 255, 200)
+    #
+    # save_image("img_3_1_bw", img_3_1_bw)
+    # save_image("img_3_2_bw", img_3_2_bw)
+    #
+    # # Since a few leaves are still marked as white, we need a close operation (Dilation followed by Erosion)
+    # erode_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 15))
+    # dilate_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (50, 50))
+    # img_3_2_bw_closing = cv2.morphologyEx(img_3_2_bw, cv2.MORPH_ERODE, erode_kernel)
+    # img_3_2_bw_closing = cv2.morphologyEx(img_3_2_bw_closing, cv2.MORPH_DILATE, dilate_kernel)
+    # save_image("img_3_2_closing", img_3_2_bw_closing)
+    #
+    # # Count oranges
+    #
+    # # Image 1
+    # (count1, hierarchy1) = cv2.findContours(
+    #     img_3_1_bw, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    # print("Image 1 oranges count:", len(count1))
+    #
+    # # Image 2 (after closing operation)
+    # (count2, hierarchy2) = cv2.findContours(
+    #     img_3_2_bw_closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    # print("Image 2 oranges count:", len(count2))
+    #
+    # # Exercise 3.2
+    # print("Computing exercise 3.2")
+    # img_3_3 = cv2.imread("img/lights.jpg")
+    # img_3_4 = cv2.imread("img/jar.jpg")
+    #
+    # # Convert to greyscale and scale down (otherwise the calculation takes far too long!)
+    # img_3_3_grey = cv2.cvtColor(img_3_3, cv2.COLOR_BGR2GRAY)
+    # width = int(img_3_3_grey.shape[1] / 10)
+    # height = int(img_3_3_grey.shape[0] / 10)
+    # img_3_3_grey = cv2.resize(img_3_3_grey, (width, height))
+    # save_image("img_3_3_grey", img_3_3_grey)
+    #
+    # img_3_4_grey = cv2.cvtColor(img_3_4, cv2.COLOR_BGR2GRAY)
+    # width = int(img_3_4_grey.shape[1] / 10)
+    # height = int(img_3_4_grey.shape[0] / 10)
+    # img_3_4_grey = cv2.resize(img_3_4_grey, (width, height))
+    # save_image("img_3_4_grey", img_3_4_grey)
+    #
+    # # Do the granulometry magic (closing operations)
+    # (img_3_3_high_contr, img_3_3_freq) = granulometry(img_3_3_grey, 3, 5, 20)
+    # save_image("img_3_3_high_contr", img_3_3_high_contr)
+    # print(img_3_3_freq)
+    # plt.plot(img_3_3_freq[:, 0], img_3_3_freq[:, 1])
+    # plt.title("img_3_3 light size frequencies")
+    # plt.show()
+    #
+    # (img_3_4_high_contr, img_3_4_freq) = granulometry(img_3_4_grey, 3, 2, 18)
+    # save_image("img_3_4_high_contr", img_3_4_high_contr)
+    # plt.plot(img_3_4_freq[:, 0], img_3_4_freq[:, 1])
+    # plt.title("img_3_4 light size frequencies")
+    # plt.show()
