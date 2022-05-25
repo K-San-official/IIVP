@@ -180,7 +180,7 @@ def dct2(a):
     return scipy.fftpack.dct(scipy.fftpack.dct(a.T, norm='ortho').T, norm='ortho' )
 
 
-def idc_block(img, k=64, size=8):
+def idc_block(img, size=8):
     """
     Inverse Discrete Cosine Transfer for an image with a certain block-size.
     :param img:
@@ -192,7 +192,7 @@ def idc_block(img, k=64, size=8):
     img_dct = np.zeros(img_size)
     for i in r_[:img.shape[0]: size]:
         for j in r_[:img.shape[1]: size]:
-            img[i:(i + size), j:(j + size)] = idct2(img_dct[i:(i + size), j:(j + size)])
+            img_dct[i:(i + size), j:(j + size)] = idct2(img[i:(i + size), j:(j + size)])
     return img_dct
 
 
@@ -220,7 +220,6 @@ def k_thresh(img, k, size=8):
             img_thresh[i:(i + size), j:(j + size)] = keep_k_coeff(k, img[i:(i + size), j:(j + size)])
     return img_thresh
 
-
 def keep_k_coeff(k, block):
     """
     Keeps the k largest coefficients of a dct block and sets the rest to 0.
@@ -231,7 +230,7 @@ def keep_k_coeff(k, block):
     height, width = block.shape
     # Convert into 1d array
     flat = np.ravel(block)
-    keep = np.argpartition(flat, -k)[-k:]  # indices to keep
+    keep = np.argpartition(np.abs(flat), -k)[-k:]  # indices to keep
     # Set values to 0 that are not the k-largest
     for i in range(len(flat)):
         if i not in keep:
@@ -351,32 +350,34 @@ if __name__ == "__main__":
     # --- Exercise 2 ---------------------------------------------------------------------------------------------------
     print("Computing exercise 2")
     img_2 = cv2.imread("img/img_2.jpg")
-    img_2_gr = cv2.cvtColor(img_2, cv2.COLOR_BGR2GRAY) / 255
-    save_image("img_2_gr", img_2_gr*255)
+    img_2_gr = cv2.cvtColor(img_2, cv2.COLOR_BGR2GRAY).astype(np.float32)
+    save_image("ex2/img_2_gr", img_2_gr)
 
     # Watermark insertion
-    pos = 416
+    pos = 8 * 29
     img_2_dct = dct_block(img_2_gr)
-    save_image("img_2_dct", img_2_dct * 255)
+    save_image("ex2/img_2_dct", img_2_dct)
 
     # Block of the original image
     block_original = cv2.resize(img_2_gr[pos:pos + 8, pos:pos + 8], (400, 400), interpolation=cv2.INTER_NEAREST)
-    save_image("block_original", block_original * 255)
-    cv2.imshow("Original Block", block_original)
+    save_image("ex2/block_original", block_original)
 
     # Block of the dct image
     block_dct = cv2.resize(img_2_dct[pos:pos + 8, pos:pos + 8], (400, 400), interpolation=cv2.INTER_NEAREST)
-    save_image("block_dct", block_dct * 255)
-    cv2.imshow("DCT Block", block_dct)
+    save_image("ex2/block_dct", block_dct)
 
     # Keep K highest DCT coefficients
-    k = 7
-    img_2_dct_thresh = k_thresh(img_2_dct, k)
+    for k in [4, 8, 16, 32]:
+        name = "ex2/img_after_thresh_k_" + str(k)
+        thresh_img = k_thresh(img_2_dct, k)
+        save_image(name, idc_block(thresh_img))
+        block_dct_thresh = cv2.resize(thresh_img[pos:pos + 8, pos:pos + 8], (400, 400),
+                                      interpolation=cv2.INTER_NEAREST)
+        block_name = "ex2/block_dct_thresh_" + str(k)
+        save_image(block_name, block_dct_thresh)
 
-    # Block of the dct image
-    block_dct_thresh = cv2.resize(img_2_dct_thresh[pos:pos + 8, pos:pos + 8], (400, 400), interpolation=cv2.INTER_NEAREST)
-    save_image("block_dct", block_dct_thresh * 255)
-    cv2.imshow("DCT Block Threshold", block_dct_thresh)
+    # Generate watermark
+
 
     cv2.waitKey()
 
