@@ -228,7 +228,6 @@ def keep_k_coeff(k, block):
     :param block:
     :return:
     """
-    height, width = block.shape
     # Convert into 1d array
     flat = np.ravel(block)
     keep = np.argpartition(np.abs(flat), -k)[-k:]  # indices to keep
@@ -237,30 +236,43 @@ def keep_k_coeff(k, block):
         if i not in keep:
             flat[i] = 0
     # Convert back to 2d array
-    result = flat.reshape(height, width)
+    result = flat.reshape(block.shape)
     return result
 
 
-def add_watermark(dct, w):
+def add_watermark(dct, w, alpha, size=8):
     """
     Adds a watermark to the dct domain.
     :param dct:
     :param w:
     :return:
     """
-    #TODO add
-    pass
+    result = np.zeros(dct.shape)
+    for i in r_[:dct.shape[0]: size]:
+        for j in r_[:dct.shape[1]: size]:
+            result[i:(i + size), j:(j + size)] = add_watermark_one_block(dct[i:(i + size), j:(j + size)], w, alpha)
+    return result
 
 
-def add_watermark_one_block(block, w):
+def add_watermark_one_block(block, w, alpha):
     """
     Adds a watermark for one single block
     :param block:
     :param w:
     :return:
     """
-    #TODO add
-    pass
+    # Convert into 1d array
+    flat = np.ravel(block)
+    w_length = len(w)
+    keep = np.argpartition(np.abs(flat), -w_length)[-w_length:]
+    w_counter = 0
+    for i in range(len(flat)):
+        if i in keep:
+            flat[i] = flat[i] * (1 + (alpha * w[w_counter]))
+            w_counter += 1
+    # Convert back to 2d array
+    result = flat.reshape(block.shape)
+    return result
 
 
 def black_and_white(img, t1, t2, t3):
@@ -401,12 +413,16 @@ if __name__ == "__main__":
     #
     # # Generate watermark
 
+    dct_min_thresh = k_thresh(img_2_dct, 16)
+
     k = 16
     mu = 0
     sd = 1
-    a = 0.5  # watermark strength alpha
+    a = 0.1  # watermark strength alpha
     w = np.random.normal(mu, sd, k)
-    print(w)
+    dct_w = add_watermark(dct_min_thresh, w, a)
+    img_2_w = idc_block(dct_w)  # convert back to spatial domain
+    save_image("img_2_with_watermark", img_2_w)
 
     cv2.waitKey()
 
