@@ -4,6 +4,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy
+import scipy.fftpack
 from skimage.util import random_noise
 from numpy import pi
 from numpy import r_
@@ -156,6 +157,7 @@ def wiener_filter_channel(o_c, n_c, k_ratio, motion_blur, alpha, beta):
 
 def dct_block(img, size=8):
     """
+    Discrete Cosine Transfer for an image with a certain block-size.
     Reference: Lab 6 code
     :param img:
     :param size:
@@ -166,13 +168,77 @@ def dct_block(img, size=8):
     for i in r_[:img_size[0]:8]:
         for j in r_[:img_size[1]:8]:
             dct[i:i + 8, j:j + 8] = dct2(img[i:i + 8, j:j + 8])
+    return dct
+
 
 def dct2(a):
+    """
+    Discrete Cosine Transfer
+    :param a:
+    :return:
+    """
     return scipy.fftpack.dct(scipy.fftpack.dct(a.T, norm='ortho').T, norm='ortho' )
 
 
+def idc_block(img, k=64, size=8):
+    """
+    Inverse Discrete Cosine Transfer for an image with a certain block-size.
+    :param img:
+    :param k:
+    :param size:
+    :return:
+    """
+    img_size = img.shape
+    img_dct = np.zeros(img_size)
+    for i in r_[:img.shape[0]: size]:
+        for j in r_[:img.shape[1]: size]:
+            img[i:(i + size), j:(j + size)] = idct2(img_dct[i:(i + size), j:(j + size)])
+    return img_dct
+
+
 def idct2(a):
+    """
+    Inverse Discrete Cosine Transfer
+    :param a:
+    :return:
+    """
     return scipy.fftpack.idct(scipy.fftpack.idct(a.T, norm='ortho').T, norm='ortho')
+
+
+def k_thresh(img, k, size=8):
+    """
+    Sets all coefficients in a block to 0 if they are not part of the k-largest.
+    :param img:
+    :param k:
+    :param size:
+    :return:
+    """
+    img_size = img.shape
+    img_thresh = np.zeros(img_size)
+    for i in r_[:img.shape[0]: size]:
+        for j in r_[:img.shape[1]: size]:
+            img_thresh[i:(i + size), j:(j + size)] = keep_k_coeff(k, img[i:(i + size), j:(j + size)])
+    return img_thresh
+
+
+def keep_k_coeff(k, block):
+    """
+    Keeps the k largest coefficients of a dct block and sets the rest to 0.
+    :param k:
+    :param block:
+    :return:
+    """
+    height, width = block.shape
+    # Convert into 1d array
+    flat = np.ravel(block)
+    keep = np.argpartition(flat, -k)[-k:]  # indices to keep
+    # Set values to 0 that are not the k-largest
+    for i in range(len(flat)):
+        if i not in keep:
+            flat[i] = 0
+    # Convert back to 2d array
+    result = flat.reshape(height, width)
+    return result
 
 
 def black_and_white(img, t1, t2, t3):
@@ -285,14 +351,32 @@ if __name__ == "__main__":
     # --- Exercise 2 ---------------------------------------------------------------------------------------------------
     print("Computing exercise 2")
     img_2 = cv2.imread("img/img_2.jpg")
-    img_2_gr = cv2.cvtColor(img_2, cv2.COLOR_BGR2GRAY)/255
+    img_2_gr = cv2.cvtColor(img_2, cv2.COLOR_BGR2GRAY) / 255
     save_image("img_2_gr", img_2_gr*255)
 
     # Watermark insertion
-    pos = 400
-    img_2_dct = cv2.dct(img_2_gr)
-    save_image("img_2_dct", img_2_dct)
-    cv2.imshow("test", cv2.resize(img_2_dct[pos:pos + 8, pos:pos + 8], (400, 400), interpolation=cv2.INTER_NEAREST))
+    pos = 416
+    img_2_dct = dct_block(img_2_gr)
+    save_image("img_2_dct", img_2_dct * 255)
+
+    # Block of the original image
+    block_original = cv2.resize(img_2_gr[pos:pos + 8, pos:pos + 8], (400, 400), interpolation=cv2.INTER_NEAREST)
+    save_image("block_original", block_original * 255)
+    cv2.imshow("Original Block", block_original)
+
+    # Block of the dct image
+    block_dct = cv2.resize(img_2_dct[pos:pos + 8, pos:pos + 8], (400, 400), interpolation=cv2.INTER_NEAREST)
+    save_image("block_dct", block_dct * 255)
+    cv2.imshow("DCT Block", block_dct)
+
+    # Keep K highest DCT coefficients
+    k = 7
+    img_2_dct_thresh = k_thresh(img_2_dct, k)
+
+    # Block of the dct image
+    block_dct_thresh = cv2.resize(img_2_dct_thresh[pos:pos + 8, pos:pos + 8], (400, 400), interpolation=cv2.INTER_NEAREST)
+    save_image("block_dct", block_dct_thresh * 255)
+    cv2.imshow("DCT Block Threshold", block_dct_thresh)
 
     cv2.waitKey()
 
