@@ -220,6 +220,7 @@ def k_thresh(img, k, size=8):
             img_thresh[i:(i + size), j:(j + size)] = keep_k_coeff(k, img[i:(i + size), j:(j + size)])
     return img_thresh
 
+
 def keep_k_coeff(k, block):
     """
     Keeps the k largest coefficients of a dct block and sets the rest to 0.
@@ -238,6 +239,28 @@ def keep_k_coeff(k, block):
     # Convert back to 2d array
     result = flat.reshape(height, width)
     return result
+
+
+def add_watermark(dct, w):
+    """
+    Adds a watermark to the dct domain.
+    :param dct:
+    :param w:
+    :return:
+    """
+    #TODO add
+    pass
+
+
+def add_watermark_one_block(block, w):
+    """
+    Adds a watermark for one single block
+    :param block:
+    :param w:
+    :return:
+    """
+    #TODO add
+    pass
 
 
 def black_and_white(img, t1, t2, t3):
@@ -353,10 +376,10 @@ if __name__ == "__main__":
     img_2_gr = cv2.cvtColor(img_2, cv2.COLOR_BGR2GRAY).astype(np.float32)
     save_image("ex2/img_2_gr", img_2_gr)
 
-    # Watermark insertion
+    # DCT
     pos = 8 * 29
     img_2_dct = dct_block(img_2_gr)
-    save_image("ex2/img_2_dct", img_2_dct)
+    save_image("ex2/img_2_dct", np.abs(img_2_dct))
 
     # Block of the original image
     block_original = cv2.resize(img_2_gr[pos:pos + 8, pos:pos + 8], (400, 400), interpolation=cv2.INTER_NEAREST)
@@ -364,20 +387,26 @@ if __name__ == "__main__":
 
     # Block of the dct image
     block_dct = cv2.resize(img_2_dct[pos:pos + 8, pos:pos + 8], (400, 400), interpolation=cv2.INTER_NEAREST)
-    save_image("ex2/block_dct", block_dct)
+    save_image("ex2/block_dct", np.abs(block_dct))
 
-    # Keep K highest DCT coefficients
-    for k in [4, 8, 16, 32]:
-        name = "ex2/img_after_thresh_k_" + str(k)
-        thresh_img = k_thresh(img_2_dct, k)
-        save_image(name, idc_block(thresh_img))
-        block_dct_thresh = cv2.resize(thresh_img[pos:pos + 8, pos:pos + 8], (400, 400),
-                                      interpolation=cv2.INTER_NEAREST)
-        block_name = "ex2/block_dct_thresh_" + str(k)
-        save_image(block_name, block_dct_thresh)
+    # # Keep K highest DCT coefficients
+    # for k in [4, 8, 16, 32]:
+    #     name = "ex2/img_after_thresh_k_" + str(k)
+    #     thresh_img = k_thresh(img_2_dct, k)
+    #     save_image(name, idc_block(thresh_img))
+    #     block_dct_thresh = cv2.resize(thresh_img[pos:pos + 8, pos:pos + 8], (400, 400),
+    #                                   interpolation=cv2.INTER_NEAREST)
+    #     block_name = "ex2/block_dct_thresh_" + str(k)
+    #     save_image(block_name, np.abs(block_dct_thresh))
+    #
+    # # Generate watermark
 
-    # Generate watermark
-
+    k = 16
+    mu = 0
+    sd = 1
+    a = 0.5  # watermark strength alpha
+    w = np.random.normal(mu, sd, k)
+    print(w)
 
     cv2.waitKey()
 
