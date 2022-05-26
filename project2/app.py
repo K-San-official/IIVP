@@ -276,10 +276,47 @@ def add_watermark_one_block(block, w, alpha):
     return result
 
 
-def detect_watermark(img, k):
+def detect_watermark(img, original, k, alpha, w, size=8):
     dct = dct_block(img)  # DCT
+    dct_original = dct_block(original)
     dct_thresh = k_thresh(img, k)  # Keep K largest
+    # Estimate approximation of the watermark
+    w_hat_sum = np.zeros(shape=(k))
+    count = 0
+    for i in r_[:dct.shape[0]: size]:
+        for j in r_[:dct.shape[1]: size]:
+            w_hat = approx_watermark_one_block(dct_thresh[i:(i + size), j:(j + size)], dct_original[i:(i + size), j:(j + size)],k, alpha)
+            w_hat_sum += w_hat
+            count += 1
+    w_avg = np.average(w)
+    w_hat_i = w_hat_sum/count
+    w_hat_avg = np.average(w_hat_i)
+    # Calculate gamma
+    num = 0
+    denom_l = 0
+    denom_r = 0
+    for i in range(k):
+        num += (w_hat_i[i] - w_hat_avg) * (w[i] - w_avg)
+        denom_l += (w_hat_i[i] - w_hat_avg)**2
+        denom_r += (w[i] - w_avg)**2
+    denom = np.sqrt(denom_l * denom_r)
+    gamma = num / denom
+    return gamma
 
+
+def approx_watermark_one_block(dct_block, original_block, k, alpha):
+    w_hat = np.zeros(shape=(k))
+    # Convert into 1d array
+    flat = np.ravel(dct_block)
+    flat_original = np.ravel(original_block)
+    keep = np.argpartition(np.abs(flat), -k)[-k:]
+    counter = 0
+    for i in range(len(flat)):
+        if i in keep and i != 0 and flat_original[i] != 0:
+            w_hat[counter] = (flat[i] - flat_original[i]) / (alpha * flat_original[i])
+            counter += 1
+    # Convert back to 2d array
+    return w_hat
 
 
 def black_and_white(img, t1, t2, t3):
@@ -445,6 +482,26 @@ if __name__ == "__main__":
     # Detect watermark
     mystery_1 = img_2_w
     mystery_2 = img_2_gr
+    threshold = 0.1
+
+    # Mystery image 1
+    gamma = detect_watermark(mystery_1, img_2_gr, k, a, w)
+    print(gamma)
+
+    if gamma >= threshold:
+        print("Watermark detected")
+    else:
+        print("No watermark detected")
+
+    # Mystery image 2
+    gamma = detect_watermark(mystery_1, img_2_gr, k, a, w)
+    print(gamma)
+
+    threshold = 0.1
+    if gamma >= threshold:
+        print("Watermark detected")
+    else:
+        print("No watermark detected")
 
 
     cv2.waitKey()
