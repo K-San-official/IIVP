@@ -230,7 +230,8 @@ def keep_k_coeff(k, block):
     """
     # Convert into 1d array
     flat = np.ravel(block)
-    keep = np.argpartition(np.abs(flat), -k)[-k:]  # indices to keep
+    k += 1  # Increment by one to leave the DC-coefficient untouched
+    keep = np.argpartition(np.abs(flat), -(k))[-k:]  # indices to keep
     # Set values to 0 that are not the k-largest
     for i in range(len(flat)):
         if i not in keep:
@@ -267,12 +268,18 @@ def add_watermark_one_block(block, w, alpha):
     keep = np.argpartition(np.abs(flat), -w_length)[-w_length:]
     w_counter = 0
     for i in range(len(flat)):
-        if i in keep:
+        if i in keep and i != 0:
             flat[i] = flat[i] * (1 + (alpha * w[w_counter]))
             w_counter += 1
     # Convert back to 2d array
     result = flat.reshape(block.shape)
     return result
+
+
+def detect_watermark(img, k):
+    dct = dct_block(img)  # DCT
+    dct_thresh = k_thresh(img, k)  # Keep K largest
+
 
 
 def black_and_white(img, t1, t2, t3):
@@ -411,18 +418,34 @@ if __name__ == "__main__":
     #     block_name = "ex2/block_dct_thresh_" + str(k)
     #     save_image(block_name, np.abs(block_dct_thresh))
     #
-    # # Generate watermark
 
+    # Generate watermark
+    # K = 16 turns out to be a good value. You cannot tell the difference to the original with normal zoom.
     dct_min_thresh = k_thresh(img_2_dct, 16)
+    img_min_thresh = idc_block(dct_min_thresh)
 
     k = 16
     mu = 0
     sd = 1
-    a = 0.1  # watermark strength alpha
+    a = 0.12  # watermark strength alpha
     w = np.random.normal(mu, sd, k)
     dct_w = add_watermark(dct_min_thresh, w, a)
     img_2_w = idc_block(dct_w)  # convert back to spatial domain
-    save_image("img_2_with_watermark", img_2_w)
+    save_image("ex2/img_2_with_watermark", img_2_w)
+
+    # Difference image
+    img_2_diff = img_2_gr - img_2_w
+    save_image("ex2/img_2_diff", np.abs(img_2_diff))
+
+    # Plot histograms
+    plt.hist(img_2_diff.ravel(), 512, [0, 50])
+    plt.title("Histogram of Difference Image")
+    # plt.show() TODO: Uncomment later
+
+    # Detect watermark
+    mystery_1 = img_2_w
+    mystery_2 = img_2_gr
+
 
     cv2.waitKey()
 
