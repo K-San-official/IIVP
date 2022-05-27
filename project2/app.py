@@ -392,32 +392,38 @@ def create_eigenface(face_list):
         height, width, channels = img.shape
         arr.append(np.reshape(img, height * width * channels))
     m = np.stack(arr, axis=0)  # 2D array containing rows for each image that is flattened out
-    mean, eigenvectors = cv2.PCACompute(m, mean=None, maxComponents=10)
+    mean, eigenvectors = cv2.PCACompute(m, mean=None)
+    weights = []
+    for i in range(6):
+        weights.append(np.dot(eigenvectors[i], np.transpose(arr[i] - mean)))  # a_i = v_i * (x - mx)
+    weights = np.transpose(weights)[0]
     eigenfaces = []
     for row in eigenvectors:
         eigenfaces.append(np.reshape(row, (height, width, channels)))
-    return [eigenvectors, eigenfaces, mean]
+    return [eigenvectors, eigenfaces, mean, weights]
 
 
-def reconstruct_faces(mean, eigenvectors, weight_list):
+def reconstruct_faces(mean, eigenvectors, weigths):
     """
     Reconstruct faces based on a mean vector, eigenvectors and a weight list corresponding to row weights of the
     eigenvectors.
     :param mean:
-    :param eigenvectors:
+    :param eigenvectors:v
     :param weight_list:
     :return:
     """
     result = mean
     for i in range(len(eigenvectors)):
-        result = np.add(result, eigenvectors[i, :] * weight_list[i])
-    return np.reshape(result, (600, 600, 3))
+        result = np.add(result, eigenvectors[i, :] * weigths[i])
+    result = np.reshape(result, (600, 600, 3))
+    result = cv2.normalize(result, None, 0, 1, cv2.NORM_MINMAX)
+    return result
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    # #%% --- Exercise 1 -------------------------------------------------------------------------------------------------
+    # #%% --- Exercise 1 -----------------------------------------------------------------------------------------------
     # print("Computing exercise 1")
     #
     # factor = 0.08  # alpha and beta value
@@ -622,32 +628,32 @@ if __name__ == "__main__":
     # Load images (all 600px x 600px with three channels)
 
     # Image 1
-    face_1_1 = cv2.imread("img/faces/face_1_1.jpg").astype(np.float32)
-    face_1_2 = cv2.imread("img/faces/face_1_2.jpg").astype(np.float32)
-    face_1_3 = cv2.imread("img/faces/face_1_3.jpg").astype(np.float32)
-    face_1_4 = cv2.imread("img/faces/face_1_4.jpg").astype(np.float32)
-    face_1_5 = cv2.imread("img/faces/face_1_5.jpg").astype(np.float32)
-    face_1_6 = cv2.imread("img/faces/face_1_6.jpg").astype(np.float32)
+    face_1_1 = cv2.imread("img/faces/face_1_1.jpg").astype(np.float32) / 255
+    face_1_2 = cv2.imread("img/faces/face_1_2.jpg").astype(np.float32) / 255
+    face_1_3 = cv2.imread("img/faces/face_1_3.jpg").astype(np.float32) / 255
+    face_1_4 = cv2.imread("img/faces/face_1_4.jpg").astype(np.float32) / 255
+    face_1_5 = cv2.imread("img/faces/face_1_5.jpg").astype(np.float32) / 255
+    face_1_6 = cv2.imread("img/faces/face_1_6.jpg").astype(np.float32) / 255
 
     face_1_list = [face_1_1, face_1_2, face_1_3, face_1_4, face_1_5, face_1_6]
 
     # Image 2
-    face_2_1 = cv2.imread("img/faces/face_2_1.jpg").astype(np.float32)
-    face_2_2 = cv2.imread("img/faces/face_2_2.jpg").astype(np.float32)
-    face_2_3 = cv2.imread("img/faces/face_2_3.jpg").astype(np.float32)
-    face_2_4 = cv2.imread("img/faces/face_2_4.jpg").astype(np.float32)
-    face_2_5 = cv2.imread("img/faces/face_2_5.jpg").astype(np.float32)
-    face_2_6 = cv2.imread("img/faces/face_2_6.jpg").astype(np.float32)
+    face_2_1 = cv2.imread("img/faces/face_2_1.jpg").astype(np.float32) / 255
+    face_2_2 = cv2.imread("img/faces/face_2_2.jpg").astype(np.float32) / 255
+    face_2_3 = cv2.imread("img/faces/face_2_3.jpg").astype(np.float32) / 255
+    face_2_4 = cv2.imread("img/faces/face_2_4.jpg").astype(np.float32) / 255
+    face_2_5 = cv2.imread("img/faces/face_2_5.jpg").astype(np.float32) / 255
+    face_2_6 = cv2.imread("img/faces/face_2_6.jpg").astype(np.float32) / 255
 
     face_2_list = [face_2_1, face_2_2, face_2_3, face_2_4, face_2_5, face_2_6]
 
     # Image 3
-    face_3_1 = cv2.imread("img/faces/face_3_1.jpg").astype(np.float32)
-    face_3_2 = cv2.imread("img/faces/face_3_2.jpg").astype(np.float32)
-    face_3_3 = cv2.imread("img/faces/face_3_3.jpg").astype(np.float32)
-    face_3_4 = cv2.imread("img/faces/face_3_4.jpg").astype(np.float32)
-    face_3_5 = cv2.imread("img/faces/face_3_5.jpg").astype(np.float32)
-    face_3_6 = cv2.imread("img/faces/face_3_6.jpg").astype(np.float32)
+    face_3_1 = cv2.imread("img/faces/face_3_1.jpg").astype(np.float32) / 255
+    face_3_2 = cv2.imread("img/faces/face_3_2.jpg").astype(np.float32) / 255
+    face_3_3 = cv2.imread("img/faces/face_3_3.jpg").astype(np.float32) / 255
+    face_3_4 = cv2.imread("img/faces/face_3_4.jpg").astype(np.float32) / 255
+    face_3_5 = cv2.imread("img/faces/face_3_5.jpg").astype(np.float32) / 255
+    face_3_6 = cv2.imread("img/faces/face_3_6.jpg").astype(np.float32) / 255
 
     face_3_list = [face_3_1, face_3_2, face_3_3, face_3_4, face_3_5, face_3_6]
 
@@ -656,14 +662,14 @@ if __name__ == "__main__":
 
     # Construct eigenfaces
 
-    [eigenvectors_1, eigenfaces_1, mean_1] = create_eigenface(face_1_list)
-    save_image("ex4/img_4_1_mean", np.reshape(mean_1, (600, 600, 3)))
+    [eigenvectors_1, eigenfaces_1, mean_1, weights_1] = create_eigenface(face_1_list)
+    save_image("ex4/img_4_1_mean", np.reshape(mean_1, (600, 600, 3)) * 255)
 
-    [eigenvectors_2, eigenfaces_2, mean_2] = create_eigenface(face_2_list)
-    save_image("ex4/img_4_2_mean", np.reshape(mean_2, (600, 600, 3)))
+    [eigenvectors_2, eigenfaces_2, mean_2, weights_2] = create_eigenface(face_2_list)
+    save_image("ex4/img_4_2_mean", np.reshape(mean_2, (600, 600, 3)) * 255)
 
-    [eigenvectors_3, eigenfaces_3, mean_3] = create_eigenface(face_3_list)
-    save_image("ex4/img_4_3_mean", np.reshape(mean_3, (600, 600, 3)))
+    [eigenvectors_3, eigenfaces_3, mean_3, weights_3] = create_eigenface(face_3_list)
+    save_image("ex4/img_4_3_mean", np.reshape(mean_3, (600, 600, 3)) * 255)
 
     # Save all eigenfaces
     count = 0
@@ -675,42 +681,41 @@ if __name__ == "__main__":
             eigenface = cv2.normalize(eigenface, None, 0, 255, cv2.NORM_MINMAX)
             save_image(file_name, eigenface)
 
-
     #%% --- Exercise 4.2 -----------------------------------------------------------------------------------------------
     print("Computing exercise 4.2")
 
     # Reconstruct faces
 
     # Image 1
-    weight_list_1 = [1, 1, 1, 1, 1, 1]
-    reconstr_1_1 = reconstruct_faces(mean_1, eigenvectors_1, weight_list_1)
-    cv2.imshow("reconstructed", reconstr_1_1 / 255)
+    img_4_1_reconstruct_1 = reconstruct_faces(mean_1, eigenvectors_1, weights_1)
+    cv2.imshow("reconstructed", img_4_1_reconstruct_1)
 
-    weight_list_2 = [0, 0, 0, 0, 1, 1]
-    reconstr_1_2 = reconstruct_faces(mean_1, eigenvectors_1, weight_list_2)
-    cv2.imshow("reconstructed2", reconstr_1_2 / 255)
-
-    # Image 2
-    weight_list_3 = [1, 1, 1, 1, 1, 1]
-    reconstr_2_1 = reconstruct_faces(mean_2, eigenvectors_2, weight_list_3)
-    cv2.imshow("reconstructed3", reconstr_2_1 / 255)
-
-    weight_list_4 = [0, 0, 0, 0, 1, 1]
-    reconstr_2_2 = reconstruct_faces(mean_2, eigenvectors_2, weight_list_4)
-    cv2.imshow("reconstructed4", reconstr_2_2 / 255)
+    weights_1[2:] = 0  # just take the first two weights (so applying just the first two eigenvectors)
+    img_4_1_reconstruct_2 = reconstruct_faces(mean_1, eigenvectors_1, weights_1)
+    cv2.imshow("reconstructed2", img_4_1_reconstruct_2)
 
     # Image 2
-    weight_list_5 = [1, 1, 1, 1, 1, 1]
-    reconstr_3_1 = reconstruct_faces(mean_3, eigenvectors_2, weight_list_3)
-    cv2.imshow("reconstructed5", reconstr_2_1 / 255)
+    img_4_2_reconstructed_1 = reconstruct_faces(mean_2, eigenvectors_2, weights_2)
+    cv2.imshow("reconstructed3", img_4_2_reconstructed_1)
 
-    weight_list_6 = [0, 0, 0, 0, 1, 1]
-    reconstr_3_2 = reconstruct_faces(mean_3, eigenvectors_2, weight_list_4)
-    cv2.imshow("reconstructed6", reconstr_2_2 / 255)
+    weights_2[2:] = 0  # just take the first two weights (so applying just the first two eigenvectors)
+    img_4_2_reconstructed_2 = reconstruct_faces(mean_2, eigenvectors_2, weights_2)
+    cv2.imshow("reconstructed4", img_4_2_reconstructed_2)
+
+    # Image 3
+    img_4_3_reconstructed_1 = reconstruct_faces(mean_3, eigenvectors_3, weights_3)
+    cv2.imshow("reconstructed5", img_4_3_reconstructed_1)
+
+    weights_3[2:] = 0  # just take the first two weights (so applying just the first two eigenvectors)
+    img_4_3_reconstructed_2 = reconstruct_faces(mean_3, eigenvectors_3, weights_3)
+    cv2.imshow("reconstructed6", img_4_3_reconstructed_2)
 
     #%% --- Exercise 4.3 -----------------------------------------------------------------------------------------------
     print("Computing exercise 4.3")
 
-    # Reconstruction with different faces
+    # Reconstruction with different weights
+    # We will take image 1 and take the weights of image 3 to completely mess it up :)
+    img_4_1_messed_up = reconstruct_faces(mean_1, eigenvectors_1, weights_3)
+    cv2.imshow("messed up", img_4_1_messed_up)
 
     cv2.waitKey()
