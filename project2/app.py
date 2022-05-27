@@ -1,17 +1,13 @@
-import math
-
+#%% --- Imports --------------------------------------------------------------------------------------------------------
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy
 import scipy.fftpack
 from skimage.util import random_noise
-from numpy import pi
 from numpy import r_
 
-"""
-Methods: In this section, all relevant methods are stored.
-"""
+#%% --- Functions ------------------------------------------------------------------------------------------------------
 
 
 def save_image(name, file):
@@ -421,7 +417,7 @@ def reconstruct_faces(mean, eigenvectors, weight_list):
 # ----------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    # # --- Exercise 1 ---------------------------------------------------------------------------------------------------
+    # #%% --- Exercise 1 -------------------------------------------------------------------------------------------------
     # print("Computing exercise 1")
     #
     # factor = 0.08  # alpha and beta value
@@ -429,7 +425,7 @@ if __name__ == "__main__":
     # img_1_1 = cv2.imread("img/bird.jpg") / 255
     # img_1_2 = cv2.imread("img/geese.jpg") / 255
     #
-    # # --- Exercise 1.1 (Adding blur) -----------------------------------------------------------------------------------
+    # #%% --- Exercise 1.1 (Adding blur) ---------------------------------------------------------------------------------
     # print("Computing exercise 1.1")
     #
     # # Just motion blur
@@ -446,7 +442,7 @@ if __name__ == "__main__":
     # img_1_2_blurry_noisy = random_noise(img_1_2_blurry, "gaussian", mean=0, var=0.002)
     # save_image("img_1_2_blurry_noisy", img_1_2_blurry_noisy * 255)
     #
-    # # --- Exercise 1.2 (Removing blur) ---------------------------------------------------------------------------------
+    # #%% --- Exercise 1.2 (Removing blur) -------------------------------------------------------------------------------
     # print("Computing exercise 1.2")
     #
     # # Inverse filter directly after motion blur (1)
@@ -478,7 +474,7 @@ if __name__ == "__main__":
     # img_1_1_wiener_after = wiener_filter(img_1_1, img_1_1_blurry_noisy, True, True, 0.8, 0.8)
     # save_image("img_1_1_wiener_after", img_1_1_wiener_after)
     #
-    # # --- Exercise 2 ---------------------------------------------------------------------------------------------------
+    # #%% --- Exercise 2 -------------------------------------------------------------------------------------------------
     # print("Computing exercise 2")
     # img_2 = cv2.imread("img/img_2.jpg")
     # img_2_gr = cv2.cvtColor(img_2, cv2.COLOR_BGR2GRAY).astype(np.float32)
@@ -507,9 +503,8 @@ if __name__ == "__main__":
     #     block_name = "ex2/block_dct_thresh_" + str(k)
     #     save_image(block_name, np.abs(block_dct_thresh))
     #
-    #
-    # Generate watermark
-    # K = 16 turns out to be a good value. You cannot tell the difference to the original with normal zoom.
+    # # Generate watermark
+    # # K = 16 turns out to be a good value. You cannot tell the difference to the original with normal zoom.
     # dct_min_thresh = k_thresh(img_2_dct, 16)
     # img_min_thresh = idc_block(dct_min_thresh)
     #
@@ -537,7 +532,7 @@ if __name__ == "__main__":
     # threshold = 0.1
     #
     # # Mystery image 1
-    # gamma = detect_watermark(mystery_1, img_2_gr, k, a, w)
+    # gamma = detect_watermark(mystery_1, dct_min_thresh, k, a, w)
     # print(gamma)
     #
     # if gamma >= threshold:
@@ -546,7 +541,7 @@ if __name__ == "__main__":
     #     print("No watermark detected")
     #
     # # Mystery image 2
-    # gamma = detect_watermark(mystery_1, img_2_gr, k, a, w)
+    # gamma = detect_watermark(mystery_2, dct_min_thresh, k, a, w)
     # print(gamma)
     #
     # threshold = 0.1
@@ -554,13 +549,13 @@ if __name__ == "__main__":
     #     print("Watermark detected")
     # else:
     #     print("No watermark detected")
-    # # --- Exercise 3 ---------------------------------------------------------------------------------------------------
+    # #%% --- Exercise 3 -------------------------------------------------------------------------------------------------
     # print("Computing exercise 3")
     #
     # img_3_1 = cv2.imread("img/oranges.jpg")
     # img_3_2 = cv2.imread("img/orangetree.jpg")
     #
-    # # Exercise 3.1
+    # #%% --- Exercise 3.1 -----------------------------------------------------------------------------------------------
     # print("Computing exercise 3.1")
     #
     # # Pre-processing (black and white)
@@ -589,7 +584,7 @@ if __name__ == "__main__":
     #     img_3_2_bw_closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     # print("Image 2 oranges count:", len(count2))
     #
-    # # Exercise 3.2
+    # #%% --- Exercise 3.2 -----------------------------------------------------------------------------------------------
     # print("Computing exercise 3.2")
     # img_3_3 = cv2.imread("img/lights.jpg")
     # img_3_4 = cv2.imread("img/jar.jpg")
@@ -621,9 +616,12 @@ if __name__ == "__main__":
     # plt.title("img_3_4 light size frequencies")
     # plt.show()
 
-    # --- Exercise 4 ---------------------------------------------------------------------------------------------------
+    #%% --- Exercise 4 -------------------------------------------------------------------------------------------------
+    print("Computing exercise 4")
 
     # Load images (all 600px x 600px with three channels)
+
+    # Image 1
     face_1_1 = cv2.imread("img/faces/face_1_1.jpg").astype(np.float32)
     face_1_2 = cv2.imread("img/faces/face_1_2.jpg").astype(np.float32)
     face_1_3 = cv2.imread("img/faces/face_1_3.jpg").astype(np.float32)
@@ -633,16 +631,86 @@ if __name__ == "__main__":
 
     face_1_list = [face_1_1, face_1_2, face_1_3, face_1_4, face_1_5, face_1_6]
 
-    # Construct Eigenfaces
+    # Image 2
+    face_2_1 = cv2.imread("img/faces/face_2_1.jpg").astype(np.float32)
+    face_2_2 = cv2.imread("img/faces/face_2_2.jpg").astype(np.float32)
+    face_2_3 = cv2.imread("img/faces/face_2_3.jpg").astype(np.float32)
+    face_2_4 = cv2.imread("img/faces/face_2_4.jpg").astype(np.float32)
+    face_2_5 = cv2.imread("img/faces/face_2_5.jpg").astype(np.float32)
+    face_2_6 = cv2.imread("img/faces/face_2_6.jpg").astype(np.float32)
+
+    face_2_list = [face_2_1, face_2_2, face_2_3, face_2_4, face_2_5, face_2_6]
+
+    # Image 3
+    face_3_1 = cv2.imread("img/faces/face_3_1.jpg").astype(np.float32)
+    face_3_2 = cv2.imread("img/faces/face_3_2.jpg").astype(np.float32)
+    face_3_3 = cv2.imread("img/faces/face_3_3.jpg").astype(np.float32)
+    face_3_4 = cv2.imread("img/faces/face_3_4.jpg").astype(np.float32)
+    face_3_5 = cv2.imread("img/faces/face_3_5.jpg").astype(np.float32)
+    face_3_6 = cv2.imread("img/faces/face_3_6.jpg").astype(np.float32)
+
+    face_3_list = [face_3_1, face_3_2, face_3_3, face_3_4, face_3_5, face_3_6]
+
+    #%% --- Exercise 4.1 -----------------------------------------------------------------------------------------------
+    print("Computing exercise 4.1")
+
+    # Construct eigenfaces
+
     [eigenvectors_1, eigenfaces_1, mean_1] = create_eigenface(face_1_list)
+    save_image("ex4/img_4_1_mean", np.reshape(mean_1, (600, 600, 3)))
+
+    [eigenvectors_2, eigenfaces_2, mean_2] = create_eigenface(face_2_list)
+    save_image("ex4/img_4_2_mean", np.reshape(mean_2, (600, 600, 3)))
+
+    [eigenvectors_3, eigenfaces_3, mean_3] = create_eigenface(face_3_list)
+    save_image("ex4/img_4_3_mean", np.reshape(mean_3, (600, 600, 3)))
+
+    # Save all eigenfaces
+    count = 0
+    for i in [eigenvectors_1, eigenvectors_2, eigenvectors_3]:
+        count += 1
+        for j in range(6):
+            file_name = "ex4/img_4_" + str(count) + "_eigenface_" + str(j)
+            eigenface = np.reshape(i[j], (600, 600, 3))
+            eigenface = cv2.normalize(eigenface, None, 0, 255, cv2.NORM_MINMAX)
+            save_image(file_name, eigenface)
+
+
+    #%% --- Exercise 4.2 -----------------------------------------------------------------------------------------------
+    print("Computing exercise 4.2")
 
     # Reconstruct faces
+
+    # Image 1
     weight_list_1 = [1, 1, 1, 1, 1, 1]
     reconstr_1_1 = reconstruct_faces(mean_1, eigenvectors_1, weight_list_1)
     cv2.imshow("reconstructed", reconstr_1_1 / 255)
 
-    weight_list_2 = [0, 0, 0, 0, 2, 2]
+    weight_list_2 = [0, 0, 0, 0, 1, 1]
     reconstr_1_2 = reconstruct_faces(mean_1, eigenvectors_1, weight_list_2)
     cv2.imshow("reconstructed2", reconstr_1_2 / 255)
+
+    # Image 2
+    weight_list_3 = [1, 1, 1, 1, 1, 1]
+    reconstr_2_1 = reconstruct_faces(mean_2, eigenvectors_2, weight_list_3)
+    cv2.imshow("reconstructed3", reconstr_2_1 / 255)
+
+    weight_list_4 = [0, 0, 0, 0, 1, 1]
+    reconstr_2_2 = reconstruct_faces(mean_2, eigenvectors_2, weight_list_4)
+    cv2.imshow("reconstructed4", reconstr_2_2 / 255)
+
+    # Image 2
+    weight_list_5 = [1, 1, 1, 1, 1, 1]
+    reconstr_3_1 = reconstruct_faces(mean_3, eigenvectors_2, weight_list_3)
+    cv2.imshow("reconstructed5", reconstr_2_1 / 255)
+
+    weight_list_6 = [0, 0, 0, 0, 1, 1]
+    reconstr_3_2 = reconstruct_faces(mean_3, eigenvectors_2, weight_list_4)
+    cv2.imshow("reconstructed6", reconstr_2_2 / 255)
+
+    #%% --- Exercise 4.3 -----------------------------------------------------------------------------------------------
+    print("Computing exercise 4.3")
+
+    # Reconstruction with different faces
 
     cv2.waitKey()
