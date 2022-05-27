@@ -366,6 +366,10 @@ def granulometry(img, k_s_start, factor, iterations):
         sa = new_sa
     return opening, result_matrix
 
+
+def create_eigenface(face_list):
+
+
 # ----------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
@@ -425,26 +429,26 @@ if __name__ == "__main__":
     #
     # img_1_1_wiener_after = wiener_filter(img_1_1, img_1_1_blurry_noisy, True, True, 0.8, 0.8)
     # save_image("img_1_1_wiener_after", img_1_1_wiener_after)
-
-    # --- Exercise 2 ---------------------------------------------------------------------------------------------------
-    print("Computing exercise 2")
-    img_2 = cv2.imread("img/img_2.jpg")
-    img_2_gr = cv2.cvtColor(img_2, cv2.COLOR_BGR2GRAY).astype(np.float32)
-    save_image("ex2/img_2_gr", img_2_gr)
-
-    # DCT
-    pos = 8 * 29
-    img_2_dct = dct_block(img_2_gr)
-    save_image("ex2/img_2_dct", np.abs(img_2_dct))
-
-    # Block of the original image
-    block_original = cv2.resize(img_2_gr[pos:pos + 8, pos:pos + 8], (400, 400), interpolation=cv2.INTER_NEAREST)
-    save_image("ex2/block_original", block_original)
-
-    # Block of the dct image
-    block_dct = cv2.resize(img_2_dct[pos:pos + 8, pos:pos + 8], (400, 400), interpolation=cv2.INTER_NEAREST)
-    save_image("ex2/block_dct", np.abs(block_dct))
-
+    #
+    # # --- Exercise 2 ---------------------------------------------------------------------------------------------------
+    # print("Computing exercise 2")
+    # img_2 = cv2.imread("img/img_2.jpg")
+    # img_2_gr = cv2.cvtColor(img_2, cv2.COLOR_BGR2GRAY).astype(np.float32)
+    # save_image("ex2/img_2_gr", img_2_gr)
+    #
+    # # DCT
+    # pos = 8 * 29
+    # img_2_dct = dct_block(img_2_gr)
+    # save_image("ex2/img_2_dct", np.abs(img_2_dct))
+    #
+    # # Block of the original image
+    # block_original = cv2.resize(img_2_gr[pos:pos + 8, pos:pos + 8], (400, 400), interpolation=cv2.INTER_NEAREST)
+    # save_image("ex2/block_original", block_original)
+    #
+    # # Block of the dct image
+    # block_dct = cv2.resize(img_2_dct[pos:pos + 8, pos:pos + 8], (400, 400), interpolation=cv2.INTER_NEAREST)
+    # save_image("ex2/block_dct", np.abs(block_dct))
+    #
     # # Keep K highest DCT coefficients
     # for k in [4, 8, 16, 32]:
     #     name = "ex2/img_after_thresh_k_" + str(k)
@@ -455,54 +459,66 @@ if __name__ == "__main__":
     #     block_name = "ex2/block_dct_thresh_" + str(k)
     #     save_image(block_name, np.abs(block_dct_thresh))
     #
-
+    #
     # Generate watermark
     # K = 16 turns out to be a good value. You cannot tell the difference to the original with normal zoom.
-    dct_min_thresh = k_thresh(img_2_dct, 16)
-    img_min_thresh = idc_block(dct_min_thresh)
+    # dct_min_thresh = k_thresh(img_2_dct, 16)
+    # img_min_thresh = idc_block(dct_min_thresh)
+    #
+    # k = 16
+    # mu = 0
+    # sd = 1
+    # a = 0.12  # watermark strength alpha
+    # w = np.random.normal(mu, sd, k)
+    # dct_w = add_watermark(dct_min_thresh, w, a)
+    # img_2_w = idc_block(dct_w)  # convert back to spatial domain
+    # save_image("ex2/img_2_with_watermark", img_2_w)
+    #
+    # # Difference image
+    # img_2_diff = img_2_gr - img_2_w
+    # save_image("ex2/img_2_diff", np.abs(img_2_diff))
+    #
+    # # Plot histograms
+    # plt.hist(img_2_diff.ravel(), 512, [0, 50])
+    # plt.title("Histogram of Difference Image")
+    # plt.show()
+    #
+    # # Detect watermark
+    # mystery_1 = img_2_w
+    # mystery_2 = img_2_gr
+    # threshold = 0.1
+    #
+    # # Mystery image 1
+    # gamma = detect_watermark(mystery_1, img_2_gr, k, a, w)
+    # print(gamma)
+    #
+    # if gamma >= threshold:
+    #     print("Watermark detected")
+    # else:
+    #     print("No watermark detected")
+    #
+    # # Mystery image 2
+    # gamma = detect_watermark(mystery_1, img_2_gr, k, a, w)
+    # print(gamma)
+    #
+    # threshold = 0.1
+    # if gamma >= threshold:
+    #     print("Watermark detected")
+    # else:
+    #     print("No watermark detected")
 
-    k = 16
-    mu = 0
-    sd = 1
-    a = 0.12  # watermark strength alpha
-    w = np.random.normal(mu, sd, k)
-    dct_w = add_watermark(dct_min_thresh, w, a)
-    img_2_w = idc_block(dct_w)  # convert back to spatial domain
-    save_image("ex2/img_2_with_watermark", img_2_w)
+    # --- Exercise 4 ---------------------------------------------------------------------------------------------------
 
-    # Difference image
-    img_2_diff = img_2_gr - img_2_w
-    save_image("ex2/img_2_diff", np.abs(img_2_diff))
+    # Load images (all 600px x 600px with three channels)
+    face_1_1 = cv2.imread("img/faces/face_1_1.jpg")
+    face_1_2 = cv2.imread("img/faces/face_1_2.jpg")
+    face_1_3 = cv2.imread("img/faces/face_1_3.jpg")
+    face_1_4 = cv2.imread("img/faces/face_1_4.jpg")
+    face_1_5 = cv2.imread("img/faces/face_1_5.jpg")
+    face_1_6 = cv2.imread("img/faces/face_1_6.jpg")
 
-    # Plot histograms
-    plt.hist(img_2_diff.ravel(), 512, [0, 50])
-    plt.title("Histogram of Difference Image")
-    # plt.show() TODO: Uncomment later
-
-    # Detect watermark
-    mystery_1 = img_2_w
-    mystery_2 = img_2_gr
-    threshold = 0.1
-
-    # Mystery image 1
-    gamma = detect_watermark(mystery_1, img_2_gr, k, a, w)
-    print(gamma)
-
-    if gamma >= threshold:
-        print("Watermark detected")
-    else:
-        print("No watermark detected")
-
-    # Mystery image 2
-    gamma = detect_watermark(mystery_1, img_2_gr, k, a, w)
-    print(gamma)
-
-    threshold = 0.1
-    if gamma >= threshold:
-        print("Watermark detected")
-    else:
-        print("No watermark detected")
-
+    face_1_list = [face_1_1, face_1_2, face_1_3, face_1_4, face_1_5, face_1_6]
+    eigenface_1 = create_eigenface(face_1_list)
 
     cv2.waitKey()
 
