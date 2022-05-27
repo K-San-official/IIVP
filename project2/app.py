@@ -277,6 +277,16 @@ def add_watermark_one_block(block, w, alpha):
 
 
 def detect_watermark(img, original, k, alpha, w, size=8):
+    """
+    Detects a watermark in an image in comparison to the original image.
+    :param img:
+    :param original:
+    :param k:
+    :param alpha:
+    :param w:
+    :param size:
+    :return:
+    """
     dct = dct_block(img)  # DCT
     dct_original = dct_block(original)
     dct_thresh = k_thresh(img, k)  # Keep K largest
@@ -305,6 +315,14 @@ def detect_watermark(img, original, k, alpha, w, size=8):
 
 
 def approx_watermark_one_block(dct_block, original_block, k, alpha):
+    """
+    Approximates the watermark for one block.
+    :param dct_block:
+    :param original_block:
+    :param k:
+    :param alpha:
+    :return:
+    """
     w_hat = np.zeros(shape=(k))
     # Convert into 1d array
     flat = np.ravel(dct_block)
@@ -368,6 +386,36 @@ def granulometry(img, k_s_start, factor, iterations):
 
 
 def create_eigenface(face_list):
+    """
+    Creates eigenfaces (and eigenvectors + mean) of a list of faces.
+    :param face_list:
+    :return:
+    """
+    arr = []
+    for img in face_list:
+        height, width, channels = img.shape
+        arr.append(np.reshape(img, height * width * channels))
+    m = np.stack(arr, axis=0)  # 2D array containing rows for each image that is flattened out
+    mean, eigenvectors = cv2.PCACompute(m, mean=None, maxComponents=10)
+    eigenfaces = []
+    for row in eigenvectors:
+        eigenfaces.append(np.reshape(row, (height, width, channels)))
+    return [eigenvectors, eigenfaces, mean]
+
+
+def reconstruct_faces(mean, eigenvectors, weight_list):
+    """
+    Reconstruct faces based on a mean vector, eigenvectors and a weight list corresponding to row weights of the
+    eigenvectors.
+    :param mean:
+    :param eigenvectors:
+    :param weight_list:
+    :return:
+    """
+    result = mean
+    for i in range(len(eigenvectors)):
+        result = np.add(result, eigenvectors[i, :] * weight_list[i])
+    return np.reshape(result, (600, 600, 3))
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -506,22 +554,6 @@ if __name__ == "__main__":
     #     print("Watermark detected")
     # else:
     #     print("No watermark detected")
-
-    # --- Exercise 4 ---------------------------------------------------------------------------------------------------
-
-    # Load images (all 600px x 600px with three channels)
-    face_1_1 = cv2.imread("img/faces/face_1_1.jpg")
-    face_1_2 = cv2.imread("img/faces/face_1_2.jpg")
-    face_1_3 = cv2.imread("img/faces/face_1_3.jpg")
-    face_1_4 = cv2.imread("img/faces/face_1_4.jpg")
-    face_1_5 = cv2.imread("img/faces/face_1_5.jpg")
-    face_1_6 = cv2.imread("img/faces/face_1_6.jpg")
-
-    face_1_list = [face_1_1, face_1_2, face_1_3, face_1_4, face_1_5, face_1_6]
-    eigenface_1 = create_eigenface(face_1_list)
-
-    cv2.waitKey()
-
     # # --- Exercise 3 ---------------------------------------------------------------------------------------------------
     # print("Computing exercise 3")
     #
@@ -588,3 +620,29 @@ if __name__ == "__main__":
     # plt.plot(img_3_4_freq[:, 0], img_3_4_freq[:, 1])
     # plt.title("img_3_4 light size frequencies")
     # plt.show()
+
+    # --- Exercise 4 ---------------------------------------------------------------------------------------------------
+
+    # Load images (all 600px x 600px with three channels)
+    face_1_1 = cv2.imread("img/faces/face_1_1.jpg").astype(np.float32)
+    face_1_2 = cv2.imread("img/faces/face_1_2.jpg").astype(np.float32)
+    face_1_3 = cv2.imread("img/faces/face_1_3.jpg").astype(np.float32)
+    face_1_4 = cv2.imread("img/faces/face_1_4.jpg").astype(np.float32)
+    face_1_5 = cv2.imread("img/faces/face_1_5.jpg").astype(np.float32)
+    face_1_6 = cv2.imread("img/faces/face_1_6.jpg").astype(np.float32)
+
+    face_1_list = [face_1_1, face_1_2, face_1_3, face_1_4, face_1_5, face_1_6]
+
+    # Construct Eigenfaces
+    [eigenvectors_1, eigenfaces_1, mean_1] = create_eigenface(face_1_list)
+
+    # Reconstruct faces
+    weight_list_1 = [1, 1, 1, 1, 1, 1]
+    reconstr_1_1 = reconstruct_faces(mean_1, eigenvectors_1, weight_list_1)
+    cv2.imshow("reconstructed", reconstr_1_1 / 255)
+
+    weight_list_2 = [0, 0, 0, 0, 2, 2]
+    reconstr_1_2 = reconstruct_faces(mean_1, eigenvectors_1, weight_list_2)
+    cv2.imshow("reconstructed2", reconstr_1_2 / 255)
+
+    cv2.waitKey()
