@@ -143,7 +143,7 @@ def wiener_filter_channel(o_c, n_c, k_ratio, motion_blur, alpha, beta):
     if motion_blur:
         h = get_h(height, width, alpha, beta)  # h(u,v) is deterministic, so we can re-create the degradation function
     else:
-        h = get_h(height, width, 0, 0)
+        h = np.ones(shape=(height, width))  # Every value of H is one to simply keep all values
     h_squared = h * np.conj(h)
     h_w = (1 / h) * (h_squared / (h_squared + (noise_power_spectrum / img_power_spectrum)))
     img_back_fft = h_w * img_fft
@@ -528,7 +528,7 @@ if __name__ == "__main__":
     #
     # # Difference image
     # img_2_diff = img_2_gr - img_2_w
-    # save_image("ex2/img_2_diff", np.abs(img_2_diff))
+    # save_image("ex2/img_2_diff", cv2.normalize(np.abs(img_2_diff), None, 0, 255, cv2.NORM_MINMAX))
     #
     # # Plot histograms
     # plt.hist(img_2_diff.ravel(), 512, [0, 50])
@@ -558,73 +558,73 @@ if __name__ == "__main__":
     #     print("Watermark detected")
     # else:
     #     print("No watermark detected")
-    # #%% --- Exercise 3 -------------------------------------------------------------------------------------------------
-    # print("Computing exercise 3")
-    #
-    # img_3_1 = cv2.imread("img/oranges.jpg")
-    # img_3_2 = cv2.imread("img/orangetree.jpg")
-    #
-    # #%% --- Exercise 3.1 -----------------------------------------------------------------------------------------------
-    # print("Computing exercise 3.1")
-    #
-    # # Pre-processing (black and white)
-    # img_3_1_bw = black_and_white(img_3_1, 100, 100, 100)
-    # img_3_2_bw = black_and_white(img_3_2, 255, 255, 200)
-    #
-    # save_image("img_3_1_bw", img_3_1_bw)
-    # save_image("img_3_2_bw", img_3_2_bw)
-    #
-    # # Since a few leaves are still marked as white, we need a close operation (Dilation followed by Erosion)
-    # erode_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 15))
-    # dilate_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (50, 50))
-    # img_3_2_bw_closing = cv2.morphologyEx(img_3_2_bw, cv2.MORPH_ERODE, erode_kernel)
-    # img_3_2_bw_closing = cv2.morphologyEx(img_3_2_bw_closing, cv2.MORPH_DILATE, dilate_kernel)
-    # save_image("img_3_2_closing", img_3_2_bw_closing)
-    #
-    # # Count oranges
-    #
-    # # Image 1
-    # (count1, hierarchy1) = cv2.findContours(
-    #     img_3_1_bw, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-    # print("Image 1 oranges count:", len(count1))
-    #
-    # # Image 2 (after closing operation)
-    # (count2, hierarchy2) = cv2.findContours(
-    #     img_3_2_bw_closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-    # print("Image 2 oranges count:", len(count2))
-    #
-    # #%% --- Exercise 3.2 -----------------------------------------------------------------------------------------------
-    # print("Computing exercise 3.2")
-    # img_3_3 = cv2.imread("img/lights.jpg")
-    # img_3_4 = cv2.imread("img/jar.jpg")
-    #
-    # # Convert to greyscale and scale down (otherwise the calculation takes far too long!)
-    # img_3_3_grey = cv2.cvtColor(img_3_3, cv2.COLOR_BGR2GRAY)
-    # width = int(img_3_3_grey.shape[1] / 10)
-    # height = int(img_3_3_grey.shape[0] / 10)
-    # img_3_3_grey = cv2.resize(img_3_3_grey, (width, height))
-    # save_image("img_3_3_grey", img_3_3_grey)
-    #
-    # img_3_4_grey = cv2.cvtColor(img_3_4, cv2.COLOR_BGR2GRAY)
-    # width = int(img_3_4_grey.shape[1] / 10)
-    # height = int(img_3_4_grey.shape[0] / 10)
-    # img_3_4_grey = cv2.resize(img_3_4_grey, (width, height))
-    # save_image("img_3_4_grey", img_3_4_grey)
-    #
-    # # Do the granulometry magic (closing operations)
-    # (img_3_3_high_contr, img_3_3_freq) = granulometry(img_3_3_grey, 3, 5, 20)
-    # save_image("img_3_3_high_contr", img_3_3_high_contr)
-    # print(img_3_3_freq)
-    # plt.plot(img_3_3_freq[:, 0], img_3_3_freq[:, 1])
-    # plt.title("img_3_3 light size frequencies")
-    # plt.show()
-    #
-    # (img_3_4_high_contr, img_3_4_freq) = granulometry(img_3_4_grey, 3, 2, 18)
-    # save_image("img_3_4_high_contr", img_3_4_high_contr)
-    # plt.plot(img_3_4_freq[:, 0], img_3_4_freq[:, 1])
-    # plt.title("img_3_4 light size frequencies")
-    # plt.show()
-    #
+
+    #%% --- Exercise 3 -------------------------------------------------------------------------------------------------
+    print("Computing exercise 3")
+
+    img_3_1 = cv2.imread("img/oranges.jpg")
+    img_3_2 = cv2.imread("img/orangetree.jpg")
+
+    #%% --- Exercise 3.1 -----------------------------------------------------------------------------------------------
+    print("Computing exercise 3.1")
+
+    # Pre-processing (black and white)
+    img_3_1_bw = black_and_white(img_3_1, 100, 100, 100)
+    img_3_2_bw = black_and_white(img_3_2, 255, 255, 200)
+
+    save_image("ex3/img_3_1_bw", img_3_1_bw)
+    save_image("ex3/img_3_2_bw", img_3_2_bw)
+
+    # Since a few leaves are still marked as white, we need a close operation (Dilation followed by Erosion)
+    erode_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 15))
+    dilate_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (50, 50))
+    img_3_2_bw_closing = cv2.morphologyEx(img_3_2_bw, cv2.MORPH_ERODE, erode_kernel)
+    img_3_2_bw_closing = cv2.morphologyEx(img_3_2_bw_closing, cv2.MORPH_DILATE, dilate_kernel)
+    save_image("ex3/img_3_2_closing", img_3_2_bw_closing)
+
+    # Count oranges
+
+    # Image 1
+    (count1, hierarchy1) = cv2.findContours(
+        img_3_1_bw, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    print("Image 1 oranges count:", len(count1))
+
+    # Image 2 (after closing operation)
+    (count2, hierarchy2) = cv2.findContours(
+        img_3_2_bw_closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    print("Image 2 oranges count:", len(count2))
+
+    #%% --- Exercise 3.2 -----------------------------------------------------------------------------------------------
+    print("Computing exercise 3.2")
+    img_3_3 = cv2.imread("img/lights.jpg")
+    img_3_4 = cv2.imread("img/jar.jpg")
+
+    # Convert to greyscale and scale down (otherwise the calculation takes far too long!)
+    img_3_3_grey = cv2.cvtColor(img_3_3, cv2.COLOR_BGR2GRAY)
+    width = int(img_3_3_grey.shape[1] / 10)
+    height = int(img_3_3_grey.shape[0] / 10)
+    img_3_3_grey = cv2.resize(img_3_3_grey, (width, height))
+    save_image("ex3/img_3_3_grey", img_3_3_grey)
+
+    img_3_4_grey = cv2.cvtColor(img_3_4, cv2.COLOR_BGR2GRAY)
+    width = int(img_3_4_grey.shape[1] / 10)
+    height = int(img_3_4_grey.shape[0] / 10)
+    img_3_4_grey = cv2.resize(img_3_4_grey, (width, height))
+    save_image("ex3/img_3_4_grey", img_3_4_grey)
+
+    # Do the granulometry magic (closing operations)
+    (img_3_3_high_contr, img_3_3_freq) = granulometry(img_3_3_grey, 3, 5, 20)
+    save_image("ex3/img_3_3_high_contr", img_3_3_high_contr)
+    plt.plot(img_3_3_freq[:, 0], img_3_3_freq[:, 1])
+    plt.title("img_3_3 light size frequencies")
+    plt.show()
+
+    (img_3_4_high_contr, img_3_4_freq) = granulometry(img_3_4_grey, 3, 2, 18)
+    save_image("ex3/img_3_4_high_contr", img_3_4_high_contr)
+    plt.plot(img_3_4_freq[:, 0], img_3_4_freq[:, 1])
+    plt.title("img_3_4 light size frequencies")
+    plt.show()
+
     # #%% --- Exercise 4 -------------------------------------------------------------------------------------------------
     # print("Computing exercise 4")
     #
