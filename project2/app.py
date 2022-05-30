@@ -291,7 +291,7 @@ def detect_watermark(img, original, k, alpha, w, size=8):
     count = 0
     for i in r_[:dct.shape[0]: size]:
         for j in r_[:dct.shape[1]: size]:
-            w_hat = approx_watermark_one_block(dct_thresh[i:(i + size), j:(j + size)], dct_original[i:(i + size), j:(j + size)],k, alpha)
+            w_hat = approx_watermark_one_block(dct_thresh[i:(i + size), j:(j + size)], dct_original[i:(i + size), j:(j + size)], k, alpha)
             w_hat_sum += w_hat
             count += 1
     w_avg = np.average(w)
@@ -406,7 +406,6 @@ def count_oranges(img):
     return count
 
 
-
 def granulometry(img, k_s_start, factor, iterations):
     """
     Calculates frequencies (sizes) of round objects in images
@@ -476,142 +475,142 @@ def reconstruct_faces(mean, eigenvectors, weigths):
 # ----------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    # #%% --- Exercise 1 -------------------------------------------------------------------------------------------------
-    # print("Computing exercise 1")
-    #
-    # factor = 0.08  # alpha and beta value
-    #
-    # img_1_1 = cv2.imread("img/bird.jpg") / 255
-    # img_1_2 = cv2.imread("img/geese.jpg") / 255
-    #
-    # #%% --- Exercise 1.1 (Adding blur) ---------------------------------------------------------------------------------
-    # print("Computing exercise 1.1")
-    #
-    # # Just motion blur
-    # img_1_1_blurry = motion_blur_filter(img_1_1, factor, factor)
-    # save_image("ex1/img_1_1_blurry", img_1_1_blurry * 255)
-    #
-    # img_1_2_blurry = motion_blur_filter(img_1_2, factor, factor)
-    # save_image("ex1/img_1_2_blurry", img_1_2_blurry * 255)
-    #
-    # # Motion blur and noise
-    # img_1_1_blurry_noisy = random_noise(img_1_1_blurry, "gaussian", mean=0, var=0.002)
-    # save_image("ex1/img_1_1_blurry_noisy", img_1_1_blurry_noisy * 255)
-    #
-    # img_1_2_blurry_noisy = random_noise(img_1_2_blurry, "gaussian", mean=0, var=0.002)
-    # save_image("ex1/img_1_2_blurry_noisy", img_1_2_blurry_noisy * 255)
-    #
-    # #%% --- Exercise 1.2 (Removing blur) -------------------------------------------------------------------------------
-    # print("Computing exercise 1.2")
-    #
-    # # Inverse filter directly after motion blur (1)
-    # inverse_1_directly = h_inverse(img_1_1_blurry, factor, factor)
-    # save_image("ex1/img_1_1_inverse_directly", inverse_1_directly * 255)
-    #
-    # inverse_2_directly = h_inverse(img_1_2_blurry, factor, factor)
-    # save_image("ex1/img_1_2_inverse_directly", inverse_2_directly * 255)
-    #
-    # # Inverse filter after motion blur and added noise (2)
-    # inverse_1_after = h_inverse(img_1_1_blurry_noisy, factor, factor)
-    # save_image("ex1/img_1_1_inverse_after", inverse_1_after * 255)
-    #
-    # inverse_2_after = h_inverse(img_1_2_blurry_noisy, factor, factor)
-    # save_image("ex1/img_1_2_inverse_after", inverse_2_after * 255)
-    #
-    # # Only additive noise added (3)
-    # img_1_1_noisy = random_noise(img_1_1, "gaussian", mean=0, var=0.002)
-    # img_1_2_noisy = random_noise(img_1_2, "gaussian", mean=0, var=0.002)
-    #
-    # # Wiener filter removing additive noise only (3)
-    # img_1_1_wiener_directly = wiener_filter(img_1_1, img_1_1_noisy)
-    # save_image("ex1/img_1_1_wiener_directly", img_1_1_wiener_directly)
-    #
-    # img_1_2_wiener_directly = wiener_filter(img_1_2, img_1_2_noisy)
-    # save_image("ex1/img_1_2_wiener_directly", img_1_2_wiener_directly)
-    #
-    # # Wiener filter removing noise and motion blur (4)
-    # img_1_1_wiener_after = wiener_filter(img_1_1, img_1_1_blurry_noisy, True, True, 0.8, 0.8)
-    # save_image("ex1/img_1_1_wiener_after", img_1_1_wiener_after)
-    #
-    # img_1_2_wiener_after = wiener_filter(img_1_2, img_1_2_blurry_noisy, True, True, 0.8, 0.8)
-    # save_image("ex1/img_1_2_wiener_after", img_1_2_wiener_after)
-    #
-    # #%% --- Exercise 2 -------------------------------------------------------------------------------------------------
-    # print("Computing exercise 2")
-    # img_2 = cv2.imread("img/img_2.jpg")
-    # img_2_gr = cv2.cvtColor(img_2, cv2.COLOR_BGR2GRAY).astype(np.float32)
-    # save_image("ex2/img_2_gr", img_2_gr)
-    #
-    # # DCT
-    # pos = 8 * 29
-    # img_2_dct = dct_block(img_2_gr)
-    # save_image("ex2/img_2_dct", np.abs(img_2_dct))
-    #
-    # # Block of the original image
-    # block_original = cv2.resize(img_2_gr[pos:pos + 8, pos:pos + 8], (400, 400), interpolation=cv2.INTER_NEAREST)
-    # save_image("ex2/block_original", block_original)
-    #
-    # # Block of the dct image
-    # block_dct = cv2.resize(img_2_dct[pos:pos + 8, pos:pos + 8], (400, 400), interpolation=cv2.INTER_NEAREST)
-    # save_image("ex2/block_dct", np.abs(block_dct))
-    #
-    # # Keep K highest DCT coefficients
-    # for k in [4, 8, 16, 32]:
-    #     name = "ex2/img_after_thresh_k_" + str(k)
-    #     thresh_img = k_thresh(img_2_dct, k)
-    #     save_image(name, idc_block(thresh_img))
-    #     block_dct_thresh = cv2.resize(thresh_img[pos:pos + 8, pos:pos + 8], (400, 400),
-    #                                   interpolation=cv2.INTER_NEAREST)
-    #     block_name = "ex2/block_dct_thresh_" + str(k)
-    #     save_image(block_name, np.abs(block_dct_thresh))
-    #
-    # # Generate watermark
-    # # K = 16 turns out to be a good value. You cannot tell the difference to the original with normal zoom.
-    # dct_min_thresh = k_thresh(img_2_dct, 16)
-    # img_min_thresh = idc_block(dct_min_thresh)
-    #
-    # k = 16
-    # mu = 0
-    # sd = 1
-    # a = 0.12  # watermark strength alpha
-    # w = np.random.normal(mu, sd, k)
-    # dct_w = add_watermark(dct_min_thresh, w, a)
-    # img_2_w = idc_block(dct_w)  # convert back to spatial domain
-    # save_image("ex2/img_2_with_watermark", img_2_w)
-    #
-    # # Difference image
-    # img_2_diff = img_2_gr - img_2_w
-    # save_image("ex2/img_2_diff", cv2.normalize(np.abs(img_2_diff), None, 0, 255, cv2.NORM_MINMAX))
-    #
-    # # Plot histograms
-    # plt.hist(img_2_diff.ravel(), 512, [0, 50])
-    # plt.title("Histogram of Difference Image")
-    # plt.show()
-    #
-    # # Detect watermark
-    # mystery_1 = img_2_w
-    # mystery_2 = img_2_gr
-    # threshold = 0.1
-    #
-    # # Mystery image 1
-    # gamma = detect_watermark(mystery_1, dct_min_thresh, k, a, w)
-    # print(gamma)
-    #
-    # if gamma >= threshold:
-    #     print("Watermark detected")
-    # else:
-    #     print("No watermark detected")
-    #
-    # # Mystery image 2
-    # gamma = detect_watermark(mystery_2, dct_min_thresh, k, a, w)
-    # print(gamma)
-    #
-    # threshold = 0.1
-    # if gamma >= threshold:
-    #     print("Watermark detected")
-    # else:
-    #     print("No watermark detected")
-    #
+    #%% --- Exercise 1 -------------------------------------------------------------------------------------------------
+    print("Computing exercise 1")
+
+    factor = 0.08  # alpha and beta value
+
+    img_1_1 = cv2.imread("img/bird.jpg") / 255
+    img_1_2 = cv2.imread("img/geese.jpg") / 255
+
+    #%% --- Exercise 1.1 (Adding blur) ---------------------------------------------------------------------------------
+    print("Computing exercise 1.1")
+
+    # Just motion blur
+    img_1_1_blurry = motion_blur_filter(img_1_1, factor, factor)
+    save_image("ex1/img_1_1_blurry", img_1_1_blurry * 255)
+
+    img_1_2_blurry = motion_blur_filter(img_1_2, factor, factor)
+    save_image("ex1/img_1_2_blurry", img_1_2_blurry * 255)
+
+    # Motion blur and noise
+    img_1_1_blurry_noisy = random_noise(img_1_1_blurry, "gaussian", mean=0, var=0.002)
+    save_image("ex1/img_1_1_blurry_noisy", img_1_1_blurry_noisy * 255)
+
+    img_1_2_blurry_noisy = random_noise(img_1_2_blurry, "gaussian", mean=0, var=0.002)
+    save_image("ex1/img_1_2_blurry_noisy", img_1_2_blurry_noisy * 255)
+
+    #%% --- Exercise 1.2 (Removing blur) -------------------------------------------------------------------------------
+    print("Computing exercise 1.2")
+
+    # Inverse filter directly after motion blur (1)
+    inverse_1_directly = h_inverse(img_1_1_blurry, factor, factor)
+    save_image("ex1/img_1_1_inverse_directly", inverse_1_directly * 255)
+
+    inverse_2_directly = h_inverse(img_1_2_blurry, factor, factor)
+    save_image("ex1/img_1_2_inverse_directly", inverse_2_directly * 255)
+
+    # Inverse filter after motion blur and added noise (2)
+    inverse_1_after = h_inverse(img_1_1_blurry_noisy, factor, factor)
+    save_image("ex1/img_1_1_inverse_after", inverse_1_after * 255)
+
+    inverse_2_after = h_inverse(img_1_2_blurry_noisy, factor, factor)
+    save_image("ex1/img_1_2_inverse_after", inverse_2_after * 255)
+
+    # Only additive noise added (3)
+    img_1_1_noisy = random_noise(img_1_1, "gaussian", mean=0, var=0.002)
+    img_1_2_noisy = random_noise(img_1_2, "gaussian", mean=0, var=0.002)
+
+    # Wiener filter removing additive noise only (3)
+    img_1_1_wiener_directly = wiener_filter(img_1_1, img_1_1_noisy)
+    save_image("ex1/img_1_1_wiener_directly", img_1_1_wiener_directly)
+
+    img_1_2_wiener_directly = wiener_filter(img_1_2, img_1_2_noisy)
+    save_image("ex1/img_1_2_wiener_directly", img_1_2_wiener_directly)
+
+    # Wiener filter removing noise and motion blur (4)
+    img_1_1_wiener_after = wiener_filter(img_1_1, img_1_1_blurry_noisy, True, True, 0.8, 0.8)
+    save_image("ex1/img_1_1_wiener_after", img_1_1_wiener_after)
+
+    img_1_2_wiener_after = wiener_filter(img_1_2, img_1_2_blurry_noisy, True, True, 0.8, 0.8)
+    save_image("ex1/img_1_2_wiener_after", img_1_2_wiener_after)
+
+    #%% --- Exercise 2 -------------------------------------------------------------------------------------------------
+    print("Computing exercise 2")
+    img_2 = cv2.imread("img/img_2.jpg")
+    img_2_gr = cv2.cvtColor(img_2, cv2.COLOR_BGR2GRAY).astype(np.float32)
+    save_image("ex2/img_2_gr", img_2_gr)
+
+    # DCT
+    pos = 8 * 29
+    img_2_dct = dct_block(img_2_gr)
+    save_image("ex2/img_2_dct", np.abs(img_2_dct))
+
+    # Block of the original image
+    block_original = cv2.resize(img_2_gr[pos:pos + 8, pos:pos + 8], (400, 400), interpolation=cv2.INTER_NEAREST)
+    save_image("ex2/block_original", block_original)
+
+    # Block of the dct image
+    block_dct = cv2.resize(img_2_dct[pos:pos + 8, pos:pos + 8], (400, 400), interpolation=cv2.INTER_NEAREST)
+    save_image("ex2/block_dct", np.abs(block_dct))
+
+    # Keep K highest DCT coefficients
+    for k in [4, 8, 16, 32]:
+        name = "ex2/img_after_thresh_k_" + str(k)
+        thresh_img = k_thresh(img_2_dct, k)
+        save_image(name, idc_block(thresh_img))
+        block_dct_thresh = cv2.resize(thresh_img[pos:pos + 8, pos:pos + 8], (400, 400),
+                                      interpolation=cv2.INTER_NEAREST)
+        block_name = "ex2/block_dct_thresh_" + str(k)
+        save_image(block_name, np.abs(block_dct_thresh))
+
+    # Generate watermark
+    # K = 16 turns out to be a good value. You cannot tell the difference to the original with normal zoom.
+    dct_min_thresh = k_thresh(img_2_dct, 16)
+    img_min_thresh = idc_block(dct_min_thresh)
+
+    k = 16
+    mu = 0
+    sd = 1
+    a = 0.12  # watermark strength alpha
+    w = np.random.normal(mu, sd, k)
+    dct_w = add_watermark(dct_min_thresh, w, a)
+    img_2_w = idc_block(dct_w)  # convert back to spatial domain
+    save_image("ex2/img_2_with_watermark", img_2_w)
+
+    # Difference image
+    img_2_diff = img_2_gr - img_2_w
+    save_image("ex2/img_2_diff", cv2.normalize(np.abs(img_2_diff), None, 0, 255, cv2.NORM_MINMAX))
+
+    # Plot histograms
+    plt.hist(img_2_diff.ravel(), 512, [0, 50])
+    plt.title("Histogram of Difference Image")
+    plt.show()
+
+    # Detect watermark
+    mystery_1 = img_2_w
+    mystery_2 = img_2_gr
+    threshold = 0.1
+
+    # Mystery image 1
+    gamma = detect_watermark(mystery_1, dct_min_thresh, k, a, w)
+    print(gamma)
+
+    if gamma >= threshold:
+        print("Watermark detected")
+    else:
+        print("No watermark detected")
+
+    # Mystery image 2
+    gamma = detect_watermark(mystery_2, dct_min_thresh, k, a, w)
+    print(gamma)
+
+    threshold = 0.1
+    if gamma >= threshold:
+        print("Watermark detected")
+    else:
+        print("No watermark detected")
+
     #%% --- Exercise 3 -------------------------------------------------------------------------------------------------
     print("Computing exercise 3")
 
@@ -675,104 +674,104 @@ if __name__ == "__main__":
     plt.plot(img_3_4_freq[:, 0], img_3_4_freq[:, 1])
     plt.title("img_3_4 light size frequencies")
     plt.show()
-    #
-    # #%% --- Exercise 4 -------------------------------------------------------------------------------------------------
-    # print("Computing exercise 4")
-    #
-    # # Load images (all 600px x 600px with three channels)
-    #
-    # # Image 1
-    # face_1_1 = cv2.imread("img/faces/face_1_1.jpg").astype(np.float32) / 255
-    # face_1_2 = cv2.imread("img/faces/face_1_2.jpg").astype(np.float32) / 255
-    # face_1_3 = cv2.imread("img/faces/face_1_3.jpg").astype(np.float32) / 255
-    # face_1_4 = cv2.imread("img/faces/face_1_4.jpg").astype(np.float32) / 255
-    # face_1_5 = cv2.imread("img/faces/face_1_5.jpg").astype(np.float32) / 255
-    # face_1_6 = cv2.imread("img/faces/face_1_6.jpg").astype(np.float32) / 255
-    #
-    # face_1_list = [face_1_1, face_1_2, face_1_3, face_1_4, face_1_5, face_1_6]
-    #
-    # # Image 2
-    # face_2_1 = cv2.imread("img/faces/face_2_1.jpg").astype(np.float32) / 255
-    # face_2_2 = cv2.imread("img/faces/face_2_2.jpg").astype(np.float32) / 255
-    # face_2_3 = cv2.imread("img/faces/face_2_3.jpg").astype(np.float32) / 255
-    # face_2_4 = cv2.imread("img/faces/face_2_4.jpg").astype(np.float32) / 255
-    # face_2_5 = cv2.imread("img/faces/face_2_5.jpg").astype(np.float32) / 255
-    # face_2_6 = cv2.imread("img/faces/face_2_6.jpg").astype(np.float32) / 255
-    #
-    # face_2_list = [face_2_1, face_2_2, face_2_3, face_2_4, face_2_5, face_2_6]
-    #
-    # # Image 3
-    # face_3_1 = cv2.imread("img/faces/face_3_1.jpg").astype(np.float32) / 255
-    # face_3_2 = cv2.imread("img/faces/face_3_2.jpg").astype(np.float32) / 255
-    # face_3_3 = cv2.imread("img/faces/face_3_3.jpg").astype(np.float32) / 255
-    # face_3_4 = cv2.imread("img/faces/face_3_4.jpg").astype(np.float32) / 255
-    # face_3_5 = cv2.imread("img/faces/face_3_5.jpg").astype(np.float32) / 255
-    # face_3_6 = cv2.imread("img/faces/face_3_6.jpg").astype(np.float32) / 255
-    #
-    # face_3_list = [face_3_1, face_3_2, face_3_3, face_3_4, face_3_5, face_3_6]
-    #
-    # #%% --- Exercise 4.1 -----------------------------------------------------------------------------------------------
-    # print("Computing exercise 4.1")
-    #
-    # # Construct eigenfaces
-    #
-    # [eigenvectors_1, eigenfaces_1, mean_1, weights_1] = create_eigenface(face_1_list)
-    # save_image("ex4/img_4_1_mean", np.reshape(mean_1, (600, 600, 3)) * 255)
-    #
-    # [eigenvectors_2, eigenfaces_2, mean_2, weights_2] = create_eigenface(face_2_list)
-    # save_image("ex4/img_4_2_mean", np.reshape(mean_2, (600, 600, 3)) * 255)
-    #
-    # [eigenvectors_3, eigenfaces_3, mean_3, weights_3] = create_eigenface(face_3_list)
-    # save_image("ex4/img_4_3_mean", np.reshape(mean_3, (600, 600, 3)) * 255)
-    #
-    # # Save all eigenfaces
-    # count = 0
-    # for i in [eigenvectors_1, eigenvectors_2, eigenvectors_3]:
-    #     count += 1
-    #     for j in range(6):
-    #         file_name = "ex4/img_4_" + str(count) + "_eigenface_" + str(j)
-    #         eigenface = np.reshape(i[j], (600, 600, 3))
-    #         eigenface = cv2.normalize(eigenface, None, 0, 255, cv2.NORM_MINMAX)
-    #         save_image(file_name, eigenface)
-    #
-    # #%% --- Exercise 4.2 -----------------------------------------------------------------------------------------------
-    # print("Computing exercise 4.2")
-    #
-    # # Reconstruct faces
-    #
-    # # Image 1
-    # img_4_1_reconstruct_1 = reconstruct_faces(mean_1, eigenvectors_1, weights_1)
-    # save_image("ex4/reconstructed1", img_4_1_reconstruct_1 * 255)
-    #
-    # weights_1[2:] = 0  # just take the first two weights (so applying just the first two eigenvectors)
-    # img_4_1_reconstruct_2 = reconstruct_faces(mean_1, eigenvectors_1, weights_1)
-    # save_image("ex4/reconstructed2", img_4_1_reconstruct_2 * 255)
-    #
-    # # Image 2
-    # img_4_2_reconstructed_1 = reconstruct_faces(mean_2, eigenvectors_2, weights_2)
-    # save_image("ex4/reconstructed3", img_4_2_reconstructed_1 * 255)
-    #
-    # weights_2[2:] = 0  # just take the first two weights (so applying just the first two eigenvectors)
-    # img_4_2_reconstructed_2 = reconstruct_faces(mean_2, eigenvectors_2, weights_2)
-    # save_image("ex4/reconstructed4", img_4_2_reconstructed_2 * 255)
-    #
-    # # Image 3
-    # img_4_3_reconstructed_1 = reconstruct_faces(mean_3, eigenvectors_3, weights_3)
-    # save_image("ex4/reconstructed5", img_4_3_reconstructed_1 * 255)
-    #
-    # weights_3[2:] = 0  # just take the first two weights (so applying just the first two eigenvectors)
-    # img_4_3_reconstructed_2 = reconstruct_faces(mean_3, eigenvectors_3, weights_3)
-    # save_image("ex4/reconstructed6", img_4_3_reconstructed_2 * 255)
-    #
-    # #%% --- Exercise 4.3 -----------------------------------------------------------------------------------------------
-    # print("Computing exercise 4.3")
-    #
-    # # Reconstruction with different weights
-    # # We will take image 1 and take the weights of image 3 to mess it up :)
-    # img_4_1_messed_up = reconstruct_faces(mean_1, eigenvectors_1, weights_3)
-    # save_image("ex4/img_4_1_messed_up", img_4_1_messed_up * 255)
-    #
-    # weights_messed_up = [100, 100, 100, 100, 100, 100]
-    # img_4_1_messed_up_completely = reconstruct_faces(mean_1, eigenvectors_1, weights_messed_up)
-    # save_image("ex4/img_4_1_messed_up_completely", img_4_1_messed_up_completely * 255)
+
+    #%% --- Exercise 4 -------------------------------------------------------------------------------------------------
+    print("Computing exercise 4")
+
+    # Load images (all 600px x 600px with three channels)
+
+    # Image 1
+    face_1_1 = cv2.imread("img/faces/face_1_1.jpg").astype(np.float32) / 255
+    face_1_2 = cv2.imread("img/faces/face_1_2.jpg").astype(np.float32) / 255
+    face_1_3 = cv2.imread("img/faces/face_1_3.jpg").astype(np.float32) / 255
+    face_1_4 = cv2.imread("img/faces/face_1_4.jpg").astype(np.float32) / 255
+    face_1_5 = cv2.imread("img/faces/face_1_5.jpg").astype(np.float32) / 255
+    face_1_6 = cv2.imread("img/faces/face_1_6.jpg").astype(np.float32) / 255
+
+    face_1_list = [face_1_1, face_1_2, face_1_3, face_1_4, face_1_5, face_1_6]
+
+    # Image 2
+    face_2_1 = cv2.imread("img/faces/face_2_1.jpg").astype(np.float32) / 255
+    face_2_2 = cv2.imread("img/faces/face_2_2.jpg").astype(np.float32) / 255
+    face_2_3 = cv2.imread("img/faces/face_2_3.jpg").astype(np.float32) / 255
+    face_2_4 = cv2.imread("img/faces/face_2_4.jpg").astype(np.float32) / 255
+    face_2_5 = cv2.imread("img/faces/face_2_5.jpg").astype(np.float32) / 255
+    face_2_6 = cv2.imread("img/faces/face_2_6.jpg").astype(np.float32) / 255
+
+    face_2_list = [face_2_1, face_2_2, face_2_3, face_2_4, face_2_5, face_2_6]
+
+    # Image 3
+    face_3_1 = cv2.imread("img/faces/face_3_1.jpg").astype(np.float32) / 255
+    face_3_2 = cv2.imread("img/faces/face_3_2.jpg").astype(np.float32) / 255
+    face_3_3 = cv2.imread("img/faces/face_3_3.jpg").astype(np.float32) / 255
+    face_3_4 = cv2.imread("img/faces/face_3_4.jpg").astype(np.float32) / 255
+    face_3_5 = cv2.imread("img/faces/face_3_5.jpg").astype(np.float32) / 255
+    face_3_6 = cv2.imread("img/faces/face_3_6.jpg").astype(np.float32) / 255
+
+    face_3_list = [face_3_1, face_3_2, face_3_3, face_3_4, face_3_5, face_3_6]
+
+    #%% --- Exercise 4.1 -----------------------------------------------------------------------------------------------
+    print("Computing exercise 4.1")
+
+    # Construct eigenfaces
+
+    [eigenvectors_1, eigenfaces_1, mean_1, weights_1] = create_eigenface(face_1_list)
+    save_image("ex4/img_4_1_mean", np.reshape(mean_1, (600, 600, 3)) * 255)
+
+    [eigenvectors_2, eigenfaces_2, mean_2, weights_2] = create_eigenface(face_2_list)
+    save_image("ex4/img_4_2_mean", np.reshape(mean_2, (600, 600, 3)) * 255)
+
+    [eigenvectors_3, eigenfaces_3, mean_3, weights_3] = create_eigenface(face_3_list)
+    save_image("ex4/img_4_3_mean", np.reshape(mean_3, (600, 600, 3)) * 255)
+
+    # Save all eigenfaces
+    count = 0
+    for i in [eigenvectors_1, eigenvectors_2, eigenvectors_3]:
+        count += 1
+        for j in range(6):
+            file_name = "ex4/img_4_" + str(count) + "_eigenface_" + str(j)
+            eigenface = np.reshape(i[j], (600, 600, 3))
+            eigenface = cv2.normalize(eigenface, None, 0, 255, cv2.NORM_MINMAX)
+            save_image(file_name, eigenface)
+
+    #%% --- Exercise 4.2 -----------------------------------------------------------------------------------------------
+    print("Computing exercise 4.2")
+
+    # Reconstruct faces
+
+    # Image 1
+    img_4_1_reconstruct_1 = reconstruct_faces(mean_1, eigenvectors_1, weights_1)
+    save_image("ex4/reconstructed1", img_4_1_reconstruct_1 * 255)
+
+    weights_1[2:] = 0  # just take the first two weights (so applying just the first two eigenvectors)
+    img_4_1_reconstruct_2 = reconstruct_faces(mean_1, eigenvectors_1, weights_1)
+    save_image("ex4/reconstructed2", img_4_1_reconstruct_2 * 255)
+
+    # Image 2
+    img_4_2_reconstructed_1 = reconstruct_faces(mean_2, eigenvectors_2, weights_2)
+    save_image("ex4/reconstructed3", img_4_2_reconstructed_1 * 255)
+
+    weights_2[2:] = 0  # just take the first two weights (so applying just the first two eigenvectors)
+    img_4_2_reconstructed_2 = reconstruct_faces(mean_2, eigenvectors_2, weights_2)
+    save_image("ex4/reconstructed4", img_4_2_reconstructed_2 * 255)
+
+    # Image 3
+    img_4_3_reconstructed_1 = reconstruct_faces(mean_3, eigenvectors_3, weights_3)
+    save_image("ex4/reconstructed5", img_4_3_reconstructed_1 * 255)
+
+    weights_3[2:] = 0  # just take the first two weights (so applying just the first two eigenvectors)
+    img_4_3_reconstructed_2 = reconstruct_faces(mean_3, eigenvectors_3, weights_3)
+    save_image("ex4/reconstructed6", img_4_3_reconstructed_2 * 255)
+
+    #%% --- Exercise 4.3 -----------------------------------------------------------------------------------------------
+    print("Computing exercise 4.3")
+
+    # Reconstruction with different weights
+    # We will take image 1 and take the weights of image 3 to mess it up :)
+    img_4_1_messed_up = reconstruct_faces(mean_1, eigenvectors_1, weights_3)
+    save_image("ex4/img_4_1_messed_up", img_4_1_messed_up * 255)
+
+    weights_messed_up = [100, 100, 100, 100, 100, 100]
+    img_4_1_messed_up_completely = reconstruct_faces(mean_1, eigenvectors_1, weights_messed_up)
+    save_image("ex4/img_4_1_messed_up_completely", img_4_1_messed_up_completely * 255)
 
