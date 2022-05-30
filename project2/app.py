@@ -354,6 +354,59 @@ def black_and_white(img, t1, t2, t3):
     return bw
 
 
+def count_oranges(img):
+    """
+    Counts oranges in an image with a connected-components algorithm.
+    :param img: black and white image
+    :return: number of oranges
+    """
+    print("Counting oranges, this might take a while. If the image size is big, consider getting some coffee.")
+    # Apply heavy closing operation to reduce the number of neighbour pixels
+    erode_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (50, 50))
+    dilate_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (10, 10))
+    img = cv2.morphologyEx(img, cv2.MORPH_ERODE, erode_kernel)
+    img = cv2.morphologyEx(img, cv2.MORPH_DILATE, dilate_kernel)
+    img = cv2.normalize(img, None, 1, 0, cv2.NORM_MINMAX)  # Scale to [0, 1]
+    height, width = img.shape
+    count = 0
+    for i in range(height):
+        for j in range(width):
+            if img[i, j] == 1:
+                remaining_neighbours = [(i, j)]  # Start with the first seen element
+                img[i, j] == 0
+                neighbour_count = 0
+                while len(remaining_neighbours) != 0:
+                    current_pixel_location = remaining_neighbours.pop()
+                    img[current_pixel_location] = 0  # set to black pixel
+                    neighbour_count += 1
+                    # Now find all active neighbours (4-connected) and add to queue
+                    (target_h, target_w) = current_pixel_location
+                    # Top neighbour pixelv
+                    if target_h - 1 > 0:
+                        if img[target_h - 1, target_w] == 1:
+                            remaining_neighbours.append((target_h - 1, target_w))
+                            img[target_h - 1, target_w] == 0
+                    # Left neighbour pixel
+                    if target_w - 1 > 0:
+                        if img[target_h, target_w - 1] == 1:
+                            remaining_neighbours.append((target_h, target_w - 1))
+                            img[target_h, target_w - 1] == 0
+                    # Bottom neighbour pixel
+                    if target_h + 1 < height - 1:
+                        if img[target_h + 1, target_w] == 1:
+                            remaining_neighbours.append((target_h + 1, target_w))
+                            img[target_h + 1, target_w] == 0
+                    # Right neighbour pixel
+                    if target_w + 1 < width - 1:
+                        if img[target_h, target_w + 1] == 1:
+                            remaining_neighbours.append((target_h, target_w + 1))
+                            img[target_h, target_w + 1] == 0
+                if neighbour_count > 400:
+                    count += 1
+    return count
+
+
+
 def granulometry(img, k_s_start, factor, iterations):
     """
     Calculates frequencies (sizes) of round objects in images
@@ -482,7 +535,7 @@ if __name__ == "__main__":
     #
     # img_1_2_wiener_after = wiener_filter(img_1_2, img_1_2_blurry_noisy, True, True, 0.8, 0.8)
     # save_image("ex1/img_1_2_wiener_after", img_1_2_wiener_after)
-
+    #
     # #%% --- Exercise 2 -------------------------------------------------------------------------------------------------
     # print("Computing exercise 2")
     # img_2 = cv2.imread("img/img_2.jpg")
@@ -559,169 +612,167 @@ if __name__ == "__main__":
     # else:
     #     print("No watermark detected")
     #
-    # #%% --- Exercise 3 -------------------------------------------------------------------------------------------------
-    # print("Computing exercise 3")
+    #%% --- Exercise 3 -------------------------------------------------------------------------------------------------
+    print("Computing exercise 3")
+
+    img_3_1 = cv2.imread("img/oranges.jpg")
+    img_3_2 = cv2.imread("img/orangetree.jpg")
+
+    #%% --- Exercise 3.1 -----------------------------------------------------------------------------------------------
+    print("Computing exercise 3.1")
+
+    # Pre-processing (black and white)
+    img_3_1_bw = black_and_white(img_3_1, 100, 100, 100)
+    img_3_2_bw = black_and_white(img_3_2, 255, 255, 200)
+
+    save_image("ex3/img_3_1_bw", img_3_1_bw)
+    save_image("ex3/img_3_2_bw", img_3_2_bw)
+
+    # Since a few leaves are still marked as white, we need a close operation (Dilation followed by Erosion)
+    erode_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 15))
+    dilate_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (50, 50))
+    img_3_2_bw_closing = cv2.morphologyEx(img_3_2_bw, cv2.MORPH_ERODE, erode_kernel)
+    img_3_2_bw_closing = cv2.morphologyEx(img_3_2_bw_closing, cv2.MORPH_DILATE, dilate_kernel)
+    save_image("ex3/img_3_2_closing", img_3_2_bw_closing)
+
+    # Count oranges
+
+    # Image 1
+    count_img_3_1 = count_oranges(img_3_1_bw)
+    print("Oranges count (first image):", count_img_3_1)
+
+    # Image 2 (after closing operation)
+    count_img_3_2 = count_oranges(img_3_2_bw_closing)
+    print("Oranges count (second image)", count_img_3_2)
+
+    #%% --- Exercise 3.2 -----------------------------------------------------------------------------------------------
+    print("Computing exercise 3.2")
+    img_3_3 = cv2.imread("img/lights.jpg")
+    img_3_4 = cv2.imread("img/jar.jpg")
+
+    # Convert to greyscale and scale down (otherwise the calculation takes far too long!)
+    img_3_3_grey = cv2.cvtColor(img_3_3, cv2.COLOR_BGR2GRAY)
+    width = int(img_3_3_grey.shape[1] / 10)
+    height = int(img_3_3_grey.shape[0] / 10)
+    img_3_3_grey = cv2.resize(img_3_3_grey, (width, height))
+    save_image("ex3/img_3_3_grey", img_3_3_grey)
+
+    img_3_4_grey = cv2.cvtColor(img_3_4, cv2.COLOR_BGR2GRAY)
+    width = int(img_3_4_grey.shape[1] / 10)
+    height = int(img_3_4_grey.shape[0] / 10)
+    img_3_4_grey = cv2.resize(img_3_4_grey, (width, height))
+    save_image("ex3/img_3_4_grey", img_3_4_grey)
+
+    # Do the granulometry magic (closing operations)
+    (img_3_3_high_contr, img_3_3_freq) = granulometry(img_3_3_grey, 3, 5, 20)
+    save_image("ex3/img_3_3_high_contr", img_3_3_high_contr)
+    plt.plot(img_3_3_freq[:, 0], img_3_3_freq[:, 1])
+    plt.title("img_3_3 light size frequencies")
+    plt.show()
+
+    (img_3_4_high_contr, img_3_4_freq) = granulometry(img_3_4_grey, 3, 2, 18)
+    save_image("ex3/img_3_4_high_contr", img_3_4_high_contr)
+    plt.plot(img_3_4_freq[:, 0], img_3_4_freq[:, 1])
+    plt.title("img_3_4 light size frequencies")
+    plt.show()
     #
-    # img_3_1 = cv2.imread("img/oranges.jpg")
-    # img_3_2 = cv2.imread("img/orangetree.jpg")
+    # #%% --- Exercise 4 -------------------------------------------------------------------------------------------------
+    # print("Computing exercise 4")
     #
-    # #%% --- Exercise 3.1 -----------------------------------------------------------------------------------------------
-    # print("Computing exercise 3.1")
-    #
-    # # Pre-processing (black and white)
-    # img_3_1_bw = black_and_white(img_3_1, 100, 100, 100)
-    # img_3_2_bw = black_and_white(img_3_2, 255, 255, 200)
-    #
-    # save_image("ex3/img_3_1_bw", img_3_1_bw)
-    # save_image("ex3/img_3_2_bw", img_3_2_bw)
-    #
-    # # Since a few leaves are still marked as white, we need a close operation (Dilation followed by Erosion)
-    # erode_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 15))
-    # dilate_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (50, 50))
-    # img_3_2_bw_closing = cv2.morphologyEx(img_3_2_bw, cv2.MORPH_ERODE, erode_kernel)
-    # img_3_2_bw_closing = cv2.morphologyEx(img_3_2_bw_closing, cv2.MORPH_DILATE, dilate_kernel)
-    # save_image("ex3/img_3_2_closing", img_3_2_bw_closing)
-    #
-    # # Count oranges
+    # # Load images (all 600px x 600px with three channels)
     #
     # # Image 1
-    # (count1, hierarchy1) = cv2.findContours(
-    #     img_3_1_bw, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-    # print("Image 1 oranges count:", len(count1))
+    # face_1_1 = cv2.imread("img/faces/face_1_1.jpg").astype(np.float32) / 255
+    # face_1_2 = cv2.imread("img/faces/face_1_2.jpg").astype(np.float32) / 255
+    # face_1_3 = cv2.imread("img/faces/face_1_3.jpg").astype(np.float32) / 255
+    # face_1_4 = cv2.imread("img/faces/face_1_4.jpg").astype(np.float32) / 255
+    # face_1_5 = cv2.imread("img/faces/face_1_5.jpg").astype(np.float32) / 255
+    # face_1_6 = cv2.imread("img/faces/face_1_6.jpg").astype(np.float32) / 255
     #
-    # # Image 2 (after closing operation)
-    # (count2, hierarchy2) = cv2.findContours(
-    #     img_3_2_bw_closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-    # print("Image 2 oranges count:", len(count2))
+    # face_1_list = [face_1_1, face_1_2, face_1_3, face_1_4, face_1_5, face_1_6]
     #
-    # #%% --- Exercise 3.2 -----------------------------------------------------------------------------------------------
-    # print("Computing exercise 3.2")
-    # img_3_3 = cv2.imread("img/lights.jpg")
-    # img_3_4 = cv2.imread("img/jar.jpg")
+    # # Image 2
+    # face_2_1 = cv2.imread("img/faces/face_2_1.jpg").astype(np.float32) / 255
+    # face_2_2 = cv2.imread("img/faces/face_2_2.jpg").astype(np.float32) / 255
+    # face_2_3 = cv2.imread("img/faces/face_2_3.jpg").astype(np.float32) / 255
+    # face_2_4 = cv2.imread("img/faces/face_2_4.jpg").astype(np.float32) / 255
+    # face_2_5 = cv2.imread("img/faces/face_2_5.jpg").astype(np.float32) / 255
+    # face_2_6 = cv2.imread("img/faces/face_2_6.jpg").astype(np.float32) / 255
     #
-    # # Convert to greyscale and scale down (otherwise the calculation takes far too long!)
-    # img_3_3_grey = cv2.cvtColor(img_3_3, cv2.COLOR_BGR2GRAY)
-    # width = int(img_3_3_grey.shape[1] / 10)
-    # height = int(img_3_3_grey.shape[0] / 10)
-    # img_3_3_grey = cv2.resize(img_3_3_grey, (width, height))
-    # save_image("ex3/img_3_3_grey", img_3_3_grey)
+    # face_2_list = [face_2_1, face_2_2, face_2_3, face_2_4, face_2_5, face_2_6]
     #
-    # img_3_4_grey = cv2.cvtColor(img_3_4, cv2.COLOR_BGR2GRAY)
-    # width = int(img_3_4_grey.shape[1] / 10)
-    # height = int(img_3_4_grey.shape[0] / 10)
-    # img_3_4_grey = cv2.resize(img_3_4_grey, (width, height))
-    # save_image("ex3/img_3_4_grey", img_3_4_grey)
+    # # Image 3
+    # face_3_1 = cv2.imread("img/faces/face_3_1.jpg").astype(np.float32) / 255
+    # face_3_2 = cv2.imread("img/faces/face_3_2.jpg").astype(np.float32) / 255
+    # face_3_3 = cv2.imread("img/faces/face_3_3.jpg").astype(np.float32) / 255
+    # face_3_4 = cv2.imread("img/faces/face_3_4.jpg").astype(np.float32) / 255
+    # face_3_5 = cv2.imread("img/faces/face_3_5.jpg").astype(np.float32) / 255
+    # face_3_6 = cv2.imread("img/faces/face_3_6.jpg").astype(np.float32) / 255
     #
-    # # Do the granulometry magic (closing operations)
-    # (img_3_3_high_contr, img_3_3_freq) = granulometry(img_3_3_grey, 3, 5, 20)
-    # save_image("ex3/img_3_3_high_contr", img_3_3_high_contr)
-    # plt.plot(img_3_3_freq[:, 0], img_3_3_freq[:, 1])
-    # plt.title("img_3_3 light size frequencies")
-    # plt.show()
+    # face_3_list = [face_3_1, face_3_2, face_3_3, face_3_4, face_3_5, face_3_6]
     #
-    # (img_3_4_high_contr, img_3_4_freq) = granulometry(img_3_4_grey, 3, 2, 18)
-    # save_image("ex3/img_3_4_high_contr", img_3_4_high_contr)
-    # plt.plot(img_3_4_freq[:, 0], img_3_4_freq[:, 1])
-    # plt.title("img_3_4 light size frequencies")
-    # plt.show()
-
-    #%% --- Exercise 4 -------------------------------------------------------------------------------------------------
-    print("Computing exercise 4")
-
-    # Load images (all 600px x 600px with three channels)
-
-    # Image 1
-    face_1_1 = cv2.imread("img/faces/face_1_1.jpg").astype(np.float32) / 255
-    face_1_2 = cv2.imread("img/faces/face_1_2.jpg").astype(np.float32) / 255
-    face_1_3 = cv2.imread("img/faces/face_1_3.jpg").astype(np.float32) / 255
-    face_1_4 = cv2.imread("img/faces/face_1_4.jpg").astype(np.float32) / 255
-    face_1_5 = cv2.imread("img/faces/face_1_5.jpg").astype(np.float32) / 255
-    face_1_6 = cv2.imread("img/faces/face_1_6.jpg").astype(np.float32) / 255
-
-    face_1_list = [face_1_1, face_1_2, face_1_3, face_1_4, face_1_5, face_1_6]
-
-    # Image 2
-    face_2_1 = cv2.imread("img/faces/face_2_1.jpg").astype(np.float32) / 255
-    face_2_2 = cv2.imread("img/faces/face_2_2.jpg").astype(np.float32) / 255
-    face_2_3 = cv2.imread("img/faces/face_2_3.jpg").astype(np.float32) / 255
-    face_2_4 = cv2.imread("img/faces/face_2_4.jpg").astype(np.float32) / 255
-    face_2_5 = cv2.imread("img/faces/face_2_5.jpg").astype(np.float32) / 255
-    face_2_6 = cv2.imread("img/faces/face_2_6.jpg").astype(np.float32) / 255
-
-    face_2_list = [face_2_1, face_2_2, face_2_3, face_2_4, face_2_5, face_2_6]
-
-    # Image 3
-    face_3_1 = cv2.imread("img/faces/face_3_1.jpg").astype(np.float32) / 255
-    face_3_2 = cv2.imread("img/faces/face_3_2.jpg").astype(np.float32) / 255
-    face_3_3 = cv2.imread("img/faces/face_3_3.jpg").astype(np.float32) / 255
-    face_3_4 = cv2.imread("img/faces/face_3_4.jpg").astype(np.float32) / 255
-    face_3_5 = cv2.imread("img/faces/face_3_5.jpg").astype(np.float32) / 255
-    face_3_6 = cv2.imread("img/faces/face_3_6.jpg").astype(np.float32) / 255
-
-    face_3_list = [face_3_1, face_3_2, face_3_3, face_3_4, face_3_5, face_3_6]
-
-    #%% --- Exercise 4.1 -----------------------------------------------------------------------------------------------
-    print("Computing exercise 4.1")
-
-    # Construct eigenfaces
-
-    [eigenvectors_1, eigenfaces_1, mean_1, weights_1] = create_eigenface(face_1_list)
-    save_image("ex4/img_4_1_mean", np.reshape(mean_1, (600, 600, 3)) * 255)
-
-    [eigenvectors_2, eigenfaces_2, mean_2, weights_2] = create_eigenface(face_2_list)
-    save_image("ex4/img_4_2_mean", np.reshape(mean_2, (600, 600, 3)) * 255)
-
-    [eigenvectors_3, eigenfaces_3, mean_3, weights_3] = create_eigenface(face_3_list)
-    save_image("ex4/img_4_3_mean", np.reshape(mean_3, (600, 600, 3)) * 255)
-
-    # Save all eigenfaces
-    count = 0
-    for i in [eigenvectors_1, eigenvectors_2, eigenvectors_3]:
-        count += 1
-        for j in range(6):
-            file_name = "ex4/img_4_" + str(count) + "_eigenface_" + str(j)
-            eigenface = np.reshape(i[j], (600, 600, 3))
-            eigenface = cv2.normalize(eigenface, None, 0, 255, cv2.NORM_MINMAX)
-            save_image(file_name, eigenface)
-
-    #%% --- Exercise 4.2 -----------------------------------------------------------------------------------------------
-    print("Computing exercise 4.2")
-
-    # Reconstruct faces
-
-    # Image 1
-    img_4_1_reconstruct_1 = reconstruct_faces(mean_1, eigenvectors_1, weights_1)
-    save_image("ex4/reconstructed1", img_4_1_reconstruct_1 * 255)
-
-    weights_1[2:] = 0  # just take the first two weights (so applying just the first two eigenvectors)
-    img_4_1_reconstruct_2 = reconstruct_faces(mean_1, eigenvectors_1, weights_1)
-    save_image("ex4/reconstructed2", img_4_1_reconstruct_2 * 255)
-
-    # Image 2
-    img_4_2_reconstructed_1 = reconstruct_faces(mean_2, eigenvectors_2, weights_2)
-    save_image("ex4/reconstructed3", img_4_2_reconstructed_1 * 255)
-
-    weights_2[2:] = 0  # just take the first two weights (so applying just the first two eigenvectors)
-    img_4_2_reconstructed_2 = reconstruct_faces(mean_2, eigenvectors_2, weights_2)
-    save_image("ex4/reconstructed4", img_4_2_reconstructed_2 * 255)
-
-    # Image 3
-    img_4_3_reconstructed_1 = reconstruct_faces(mean_3, eigenvectors_3, weights_3)
-    save_image("ex4/reconstructed5", img_4_3_reconstructed_1 * 255)
-
-    weights_3[2:] = 0  # just take the first two weights (so applying just the first two eigenvectors)
-    img_4_3_reconstructed_2 = reconstruct_faces(mean_3, eigenvectors_3, weights_3)
-    save_image("ex4/reconstructed6", img_4_3_reconstructed_2 * 255)
-
-    #%% --- Exercise 4.3 -----------------------------------------------------------------------------------------------
-    print("Computing exercise 4.3")
-
-    # Reconstruction with different weights
-    # We will take image 1 and take the weights of image 3 to mess it up :)
-    img_4_1_messed_up = reconstruct_faces(mean_1, eigenvectors_1, weights_3)
-    save_image("ex4/img_4_1_messed_up", img_4_1_messed_up * 255)
-
-    weights_messed_up = [100, 100, 100, 100, 100, 100]
-    img_4_1_messed_up_completely = reconstruct_faces(mean_1, eigenvectors_1, weights_messed_up)
-    save_image("ex4/img_4_1_messed_up_completely", img_4_1_messed_up_completely * 255)
+    # #%% --- Exercise 4.1 -----------------------------------------------------------------------------------------------
+    # print("Computing exercise 4.1")
+    #
+    # # Construct eigenfaces
+    #
+    # [eigenvectors_1, eigenfaces_1, mean_1, weights_1] = create_eigenface(face_1_list)
+    # save_image("ex4/img_4_1_mean", np.reshape(mean_1, (600, 600, 3)) * 255)
+    #
+    # [eigenvectors_2, eigenfaces_2, mean_2, weights_2] = create_eigenface(face_2_list)
+    # save_image("ex4/img_4_2_mean", np.reshape(mean_2, (600, 600, 3)) * 255)
+    #
+    # [eigenvectors_3, eigenfaces_3, mean_3, weights_3] = create_eigenface(face_3_list)
+    # save_image("ex4/img_4_3_mean", np.reshape(mean_3, (600, 600, 3)) * 255)
+    #
+    # # Save all eigenfaces
+    # count = 0
+    # for i in [eigenvectors_1, eigenvectors_2, eigenvectors_3]:
+    #     count += 1
+    #     for j in range(6):
+    #         file_name = "ex4/img_4_" + str(count) + "_eigenface_" + str(j)
+    #         eigenface = np.reshape(i[j], (600, 600, 3))
+    #         eigenface = cv2.normalize(eigenface, None, 0, 255, cv2.NORM_MINMAX)
+    #         save_image(file_name, eigenface)
+    #
+    # #%% --- Exercise 4.2 -----------------------------------------------------------------------------------------------
+    # print("Computing exercise 4.2")
+    #
+    # # Reconstruct faces
+    #
+    # # Image 1
+    # img_4_1_reconstruct_1 = reconstruct_faces(mean_1, eigenvectors_1, weights_1)
+    # save_image("ex4/reconstructed1", img_4_1_reconstruct_1 * 255)
+    #
+    # weights_1[2:] = 0  # just take the first two weights (so applying just the first two eigenvectors)
+    # img_4_1_reconstruct_2 = reconstruct_faces(mean_1, eigenvectors_1, weights_1)
+    # save_image("ex4/reconstructed2", img_4_1_reconstruct_2 * 255)
+    #
+    # # Image 2
+    # img_4_2_reconstructed_1 = reconstruct_faces(mean_2, eigenvectors_2, weights_2)
+    # save_image("ex4/reconstructed3", img_4_2_reconstructed_1 * 255)
+    #
+    # weights_2[2:] = 0  # just take the first two weights (so applying just the first two eigenvectors)
+    # img_4_2_reconstructed_2 = reconstruct_faces(mean_2, eigenvectors_2, weights_2)
+    # save_image("ex4/reconstructed4", img_4_2_reconstructed_2 * 255)
+    #
+    # # Image 3
+    # img_4_3_reconstructed_1 = reconstruct_faces(mean_3, eigenvectors_3, weights_3)
+    # save_image("ex4/reconstructed5", img_4_3_reconstructed_1 * 255)
+    #
+    # weights_3[2:] = 0  # just take the first two weights (so applying just the first two eigenvectors)
+    # img_4_3_reconstructed_2 = reconstruct_faces(mean_3, eigenvectors_3, weights_3)
+    # save_image("ex4/reconstructed6", img_4_3_reconstructed_2 * 255)
+    #
+    # #%% --- Exercise 4.3 -----------------------------------------------------------------------------------------------
+    # print("Computing exercise 4.3")
+    #
+    # # Reconstruction with different weights
+    # # We will take image 1 and take the weights of image 3 to mess it up :)
+    # img_4_1_messed_up = reconstruct_faces(mean_1, eigenvectors_1, weights_3)
+    # save_image("ex4/img_4_1_messed_up", img_4_1_messed_up * 255)
+    #
+    # weights_messed_up = [100, 100, 100, 100, 100, 100]
+    # img_4_1_messed_up_completely = reconstruct_faces(mean_1, eigenvectors_1, weights_messed_up)
+    # save_image("ex4/img_4_1_messed_up_completely", img_4_1_messed_up_completely * 255)
 
